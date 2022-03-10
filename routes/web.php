@@ -7,7 +7,7 @@ use App\Http\Controllers\User\TransactController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
+
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
@@ -21,6 +21,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/Users/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 Route::get('/Users/AddTransaction', [App\Http\Controllers\User\TransactController::class, 'addtransact'])->name('addtransact');
 Route::get('/Users/PendingTransactions', [App\Http\Controllers\User\TransactController::class, 'pendingtransact'])->name('Pendingtransact');
 Route::get('/Users/ApprovedTransactions', [App\Http\Controllers\User\TransactController::class, 'approvedtransact'])->name('Approvedtransact');

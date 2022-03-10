@@ -42,10 +42,18 @@
         </thead>
         <tbody>
             @foreach($schedule as $sched)
+            <tr>
+               <td>{{$sched->sched_date_transfer}}</td>
             <td>{{$sched->transfer_type}}</td>
-            <td>{{$sched->sched_date_transfer}}</td>
             <td>{{$sched->Remarks}}</td>
-            <td style="color:green">{{$sched->Status}}</td>
+            @if($sched->Status=='Pending')
+            <td style="color:blue">{{$sched->Status}}</td>
+            @elseif($sched->Status=='Success')
+             <td style="color:green">{{$sched->Status}}</td>
+            @else
+             <td style="color:red">{{$sched->Status}}</td>
+            @endif
+          </tr>
             @endforeach
         </tbody>
       

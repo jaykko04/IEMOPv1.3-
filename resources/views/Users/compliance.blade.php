@@ -27,24 +27,25 @@
       {{ session()->get('failed') }}  
     </div><br />
     @endif
-        
+         <form action="{{ route('compliancereq')}}" method="post">
+
+  
 <div class="table-responsive py-4">
      <table id="myTable" class="data-table display" style="width:100%">
         <thead class="thead-light">
-            <tr> 
+            <tr>
               <th>Owner Name</th>
               <th>Date Issued</th>
               <th>Expiry Date</th>
                  <th>Technology</th>
                  <th>Total Recs</th>
                   <th>Surrender</th>
-                    <th>Action</th>
             </tr>
         </thead>
         <tbody>
-     
-            @foreach($compliance as $compliance)
-           
+        <?php $id = 0; ?>
+              @foreach($compliance as $compliance)
+           <?php $id++; ?>
             <tr>
             <td>{{$compliance->ownername}} </td>
             <td >{{$compliance->dateissued}}</td>
@@ -53,68 +54,31 @@
             <td>{{$compliance->totalrecs }}
             </td>
             <td>
-            
-              {{ Request::get('TotalSurrender') }}
-              
+               <input type="hidden" name="function_count[{{$id}}]" value="{{$id}}" id="function_count[{{$id}}]">
+              <input type="hidden" name="ownername[]" value="{{$compliance->ownername}}" id="ownername">
+
+        <input type="hidden" name="dateissued[]" value="{{$compliance->dateissued}}" id="dateissued">
+
+       <input type="hidden" name="expirydate[]" value="{{$compliance->expirydate}}" id="expirydate">
+
+       <input type="hidden" name="technology[]" value="{{$compliance->technology}}" id="technology">
+       <input type="hidden" name="totalrecs[]" value="{{$compliance->totalrecs }}" id="totalrecs">
+            <input type="number" name="surrender_req[]" id="surrender_req" value="0" class="form-control col-sm-6" min="0" max="{{$compliance->totalrecs }}" />
               </td>
-               <td>
-              <a class="btn btn-success" href="#" data-toggle="modal" data-target="#addmodal{{$compliance->ownername}}" data-id="{{$compliance->ownername}}">
-                    +
-                </a>
-              </td> 
-            
+               
             </tr>
-             <div class="modal fade" id="addmodal{{$compliance->ownername}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Number of RECs to Surrender</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <form method="get" action="">
-                <div class="modal-body">
-                  <h5>Owner Name : <u>{{$compliance->ownername}}</u></h5>
-                   <h5>Technology : <u>{{$compliance->technology}}</u></h5>
-                   <h5>Input number of Recs to surrender :</h5>
-                  <input type="number" name="TotalSurrender" class="form-control" min="1" max="{{$compliance->totalrecs }}">
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                     
-                           <button type="submit" class="btn btn-success">Add</button>
-                       
-                </div>
-                </form>
-            </div>
-        </div>
-   
             @endforeach
         </tbody>
       
     </table>
 
 </div>
-  <form action="{{ route('compliancereq')}}" method="post"> 
 
-        <input type="hidden" name="ownername" value="{{$compliance->ownername}}" id="ownername">
-
-        <input type="hidden" name="dateissued" value="{{$compliance->dateissued}}" id="dateissued">
-
-       <input type="hidden" name="expirydate" value="{{$compliance->expirydate}}" id="expirydate">
-
-       <input type="hidden" name="technology" value="{{$compliance->technology}}" id="technology">
-       <input type="hidden" name="totalrecs" value="{{$compliance->totalrecs }}" id="totalrecs">
-<input type="hidden" name="surrender_req" value="{{ Request::get('TotalSurrender') }}" id="surrender_req">
 <!-- table table-bordered  -->
           {{ csrf_field() }}
- <h3 style="float:right; margin-right: 100px"><b>Total RECs Surrender : {{ Request::get('TotalSurrender') }}</b></br></br>
+ <h3 style="float:right; margin-right: 100px"><b>Total RECs Surrender : {{$totalsur}}</b></br></br>
 
- <b>Total RECs Remaining : {{$compliance->totalrecs }}</b></h3>
+ <b>Total RECs Remaining : {{$total}}</b></h3>
  <button style="position:fixed;
 right:20px;
 bottom:100px" type="submit" class="btn btn-success">{{ __('Save') }}</button>

@@ -32,19 +32,22 @@
      <table id="myTable" class="data-table display" style="width:100%">
         <thead class="thead-light">
             <tr> 
-              <th>Owner Name</th>
-                 <th>Total Expired</th>
-                  <th>Date Generated</th>
-                  <th>Updated By</th>
-                
+               <th>Owner Name</th>
+              <th>Date Issued</th>
+              <th>Expiry Date</th>
+                 <th>Technology</th>
+                 <th>Total Expired</th>  
             </tr>
         </thead>
         <tbody>
             @foreach($expiration as $expiration)
+            <tr>
             <td>{{$expiration->ownername}}</td>
-            <td>{{$expiration->total_expired}}</td>
-            <td>{{$expiration->date_generated}}</td>
-            <td >{{$expiration->updated_date}}</td>
+            <td>{{$expiration->dateissued}}</td>
+            <td>{{$expiration->expirydate}}</td>
+            <td >{{$expiration->technology}}</td>
+            <td >{{$expiration->total_expired}}</td>
+            </tr>
             @endforeach
         </tbody>
       

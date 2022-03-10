@@ -2,10 +2,10 @@
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/Users/home') }}">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+        <div class="sidebar-brand-icon">
+           
         </div>
-        <div class="sidebar-brand-text mx-3">IEMOP</div>
+        <div class="sidebar-brand-text mx-3"><img src="{{url('/img/iemoplogo.png')}}" alt="Image" style="width: 150px"/></div>
     </a>
 
     <!-- Divider -->

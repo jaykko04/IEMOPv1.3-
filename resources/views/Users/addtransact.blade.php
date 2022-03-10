@@ -315,10 +315,10 @@
                 <label for="others">{{ __('Technology ') }}</label>
                    
                   <div class="col-xl-6 order-xl-3">
-                    <select class="form-control form-control-lg" name="getype" id="getype" onchange="myFunction()" required> 
+                    <select class="form-control form-control-lg" name="type" id="type" required> 
                        @foreach($Type as $Type )
                   
-                      <option value="{{ $Type->Type}}">{{ $Type->Type}}</option>
+                      <option value="{{ $Type->technology}}">{{ $Type->technology}}</option>
                       
                          @endforeach
                     </select>
@@ -327,7 +327,7 @@
                    <label for="others">{{ __('Issued Date ') }}</label>
                  
                   <div class="col-xl-6 order-xl-3">
-                    <select class="form-control form-control-lg" name="issueddate" id="issueddate" onchange="myFunction()" required>
+                    <select class="form-control form-control-lg" name="issueddate" id="issueddate" required>
                        @foreach($issueddate as $issueddate )
                       <option value="{{ $issueddate->dateissued}}">{{ $issueddate->dateissued}}</option>
                         @endforeach
@@ -336,7 +336,7 @@
                   <label for="others">{{ __('Expiry Date ') }}</label>
                  
                   <div class="col-xl-6 order-xl-3">
-                    <select class="form-control form-control-lg" name="expirydate" id="expirydate" onchange="myFunction()" required>
+                    <select class="form-control form-control-lg" name="expirydate" id="expirydate" required>
                        @foreach($expirydate as $expirydate )
                       <option value="{{ $expirydate->expirydate}}">{{ $expirydate->expirydate}}</option>
                         @endforeach
@@ -353,8 +353,7 @@
                   <br>
                  <label for="start">Start month:</label>
                   <div class="col-xl-6 order-xl-3">
-                  <input type="month" class="form-control form-control-lg"  id="start" name="start"
-                         min="2022-01">
+                  <input type="month" class="form-control form-control-lg"  id="start" name="start">
 
                  <label for="start">End month:</label>
                    <input type="month" class="form-control form-control-lg"  id="end" name="end">
@@ -376,12 +375,12 @@
                <label for="others">{{ __('Price ') }}</label>
                  
                   <div class="col-xl-6 order-xl-3">
-                    <input type="number" class="form-control form-control-lg" placeholder="&#8369; " min="1" name="price" required/>
+                    <input type="number" class="form-control form-control-lg" placeholder="&#8369; " min="1" name="price"/>
                   </div>
                   <label for="others">{{ __('Volume ') }}</label>
                  
                   <div class="col-xl-6 order-xl-3">
-                    <input type="number" class="form-control form-control-lg"  min="1" name="volume" id="volume" required/>
+                    <input type="number" class="form-control form-control-lg"  min="1" name="volume" id="volume"/>
                    
                   </div>
              
@@ -429,7 +428,7 @@
               </div>
               <div class="col-md-9 pe-5">
 
-                <input type="file" class="form-control form-control-lg" id="chooseFile" name="file"  accept="application/pdf" required />
+                <input type="file" class="form-control form-control-lg" id="chooseFile" name="file"  accept="application/pdf" >
                 <div class="small text-muted mt-2">Upload your agreement</div>
 
               </div>

@@ -17,7 +17,7 @@ use App\DataTables\UsersDataTable;
 use App\Charts\UserChart;
 use Carbon\Carbon;
 use PDF;
-
+use Carbon\CarbonPeriod;
 class TransactController extends Controller
 {
     /**
@@ -78,22 +78,22 @@ class TransactController extends Controller
                 ->where('resource_name','!=', $user)
                 ->get();
 
-             $Type = DB::table("mandated_participants")
-               ->orderby('Type','asc')
-               ->Distinct('Type')
-                ->select('Type')
+             $Type = DB::table("compliance")
+               ->orderby('technology','asc')
+              ->where('ownername',$user)
+              ->groupBy('technology')
                ->get();
 
-            $issueddate = DB::table("Recertificate")
+            $issueddate = DB::table("compliance")
                ->orderby('dateissued','asc')
-               ->Distinct('dateissued')
-                ->select('dateissued')
+               ->where('ownername',$user)
+               ->groupBy('dateissued')
                ->get();
 
-            $expirydate = DB::table("Recertificate")
+            $expirydate = DB::table("compliance")
                ->orderby('expirydate','asc')
-               ->Distinct('expirydate')
-                ->select('expirydate')
+               ->where('ownername',$user)
+               ->groupBy('expirydate')
                ->get(); 
 
 
@@ -102,19 +102,13 @@ class TransactController extends Controller
              $getexpirydate = $request->get('ed');
 
 
-              $selectserial = DB::table("Recertificate")
-               ->orderby('serialnumber','asc')
-                ->select('*')
-                ->WHERE('technology','=','biomass', 'AND', 'dateissued','=', '2021-10-21' ,'AND', 'expirydate', '=','2024-10-21')
-               ->get();
-               $Count = $selectserial->count();
+      
 
         return view('Users.addtransact')->with('seller',$seller)
         ->with('buyer',$buyer)
         ->with("Type",$Type)
         ->with("issueddate",$issueddate)
-        ->with("expirydate",$expirydate)
-        ->with("Count",$Count);
+        ->with("expirydate",$expirydate);
 
     }
     public function pendingtransact()
@@ -148,14 +142,17 @@ class TransactController extends Controller
         $price = $request->input('price');
         $start = $request->input('start');
         $end = $request->input('end');
-       /* $gettype = $request->get('gettype');
-        $getdateissued = $request->get('getdateissued');
-        $getexpirydate = $request->get('getexpirydate');*/
+        $gettype = $request->input('type');
+        $getdateissued = $request->input('issueddate');
+        $getexpirydate = $request->input('expirydate');
 
         $request->validate([
-        'file' => 'required|mimes:pdf|max:5048'
-        ]);
-
+        'file' => 'required|mimes:pdf|max:5048',
+          'newownername' => 'required',
+          'price' => 'required',
+          'volume'=>'required',
+          'check'=>'required'
+       ]);
         $fileModel = new rectransfer_req;
 
 
@@ -167,55 +164,52 @@ class TransactController extends Controller
            /* $fileModel->save();*/
           }
            
-            for($x=0; $x < $count; $x++)
-            {
-            $serialnumber['data'] = DB::table('Recertificate')
-             ->select('*')
-             ->where('ownername', '=', $ownername)
-             ->skip($x)
-             ->take(1)->get();
-                foreach ($serialnumber['data'] as $key) {
-                    # code...
-             
-        // $serialnumber = $request->input('serialnumber');
-            $data = array('serialnumber'=>$key->serialnumber,
-              "original_ownername"=>$key->ownername,
-              "ownername"=>$ownername,
-              "newownername"=>$newownername,
-              "generatorname"=>$key->generatorname,
-              "customerName"=>$key->customerName,
-              "xferRequested_by"=>$xferRequested_by,
-              "xferRequestDate"=>$xferRequestDate,
-              "xferStatus"=>$xferStatus,
-              "technology"=>$key->technology,
-              "vintage"=>$key->vintage,
-              "startDate"=>$key->startDate,
-              "endDate"=>$key->endDate,
-              "dateissued"=>$key->dateissued,
-              "expirydate"=>$key->expirydate,
-              "IDParent"=>$key->IDParent,
-              "typeFit"=>$key->typeFIT,
-              "Main_ID"=>$key->ID);
 
-               DB::table('rectransfer')->insert($data);
-           
-                                                        }
-                                                       
-            }
             if($start == null && $end ==null)
             {
+               $recs  =  DB::table('compliance')
+              ->select('*')
+              ->where('ownername','=',$ownername)
+              ->where('dateissued','=',$getdateissued)
+              ->where('expirydate','=',$getexpirydate)
+               ->where('technology','=',$gettype)
+              ->get();
+              foreach ($recs as $recs) {
+               
+              }
+                if($recs->totalrecs < $count)
+                {
+                 return redirect('/Users/AddTransaction')
+                        ->with('failed','Not enough recs.');
+                }
+                else if($recs->totalrecs >= $count)
+                {
+                   $data2 = array("ownername"=>$ownername,"newownername"=>$newownername,"price"=>$price,"volume"=>$count,"technology"=>$gettype,"dateissued"=>$getdateissued,"expirydate"=>$getexpirydate,"updateddate"=>$xferRequestDate,"transfer_type"=>"One-off","xferStatus"=>$xferStatus,"agreement_file_path"=> $agreement_file_path);
+                     DB::table('rectransfer_req')->insert($data2);
 
-               $data2 = array("ownername"=>$ownername,"newownername"=>$newownername,"price"=>$price,"volume"=>$count,"technology"=>$key->technology,"dateissued"=>$key->dateissued,"expirydate"=>$key->expirydate,"updateddate"=>$xferRequestDate,"transfer_type"=>"One-off","xferStatus"=>$xferStatus,"agreement_file_path"=> $agreement_file_path);
+                 return redirect('/Users/PendingTransactions')
+                ->with('success','Transaction Successfully created.');
+                }
+                else
+                {
+                   return redirect('/Users/PendingTransactions')
+                ->with('failed','Transaction failed');
+                }
             }
             else
             {
+             
+             
                $data2 = array("ownername"=>$ownername,"newownername"=>$newownername,"price"=>$price,"volume"=>$count,"technology"=>"","dateissued"=>"","expirydate"=>"","start_date"=>$start,"end_date"=>$end,"transfer_type"=>"Standing Order","xferStatus"=>$xferStatus,"agreement_file_path"=> $agreement_file_path);
-               
+                 DB::table('rectransfer_req')->insert($data2);
+              
+      return redirect('/Users/PendingTransactions')
+                ->with('success','Transaction Successfully created.');
             }
             
-            DB::table('rectransfer_req')->insert($data2);
+          
 
-        return redirect('/Users/PendingTransactions')->with('success','Transaction Successfully created.');
+       
     }
 
     /**
@@ -257,61 +251,67 @@ class TransactController extends Controller
 
         $rectransfer_req  =  DB::table('rectransfer_req')
             ->select(DB::raw('*'))
-            ->orWhere('updateddate', 'like', '%' . $from . '%')
-            ->where('ownername','=',$user or 'newownername','=',$user )
+            ->Where('updateddate', 'LIKE',$from.'%')
+            ->Where('ownername','=',$user )
+            ->orWhere('newownername','=',$user )
+             ->Where('xferStatus','=','A' )
+             ->where('updateddate','LIKE',$from.'%')
             ->get();
 
         $rectransfer_req_total  =  DB::table('rectransfer_req')
             ->select(DB::raw('*'))
-            ->orWhere('updateddate', 'like', '%' . $from . '%')
-            ->where('ownername','=',$user or 'newownername','=',$user )
+            ->Where('updateddate', 'LIKE',$from.'%')
+            ->Where('ownername','=',$user )
+            ->orWhere('newownername','=',$user )
+             ->Where('xferStatus','=','A' )
             ->sum('volume');
 
-        $expired  =  DB::table('Expiration_sub')
-            ->select(DB::raw('expired_date'), DB::raw('count(*) as total'))
-            ->groupBy('expired_date')
-            ->orderBy('expired_date', 'asc')
-            ->orWhere('expired_date', 'like', '%' . $from . '%')
+        $expired  =  DB::table('expiration_main')
+            ->select(DB::raw('expirydate'), DB::raw('count(*) as total'))
+            ->groupBy('expirydate')
+            ->orderBy('expirydate', 'asc')
+            ->Where('expirydate', 'like',$from . '%')
             ->where('ownername','=',$user)
             ->take(7)
             ->get();
 
-       $surrendered  =  DB::table('Compliance_sub')
-            ->select(DB::raw('surrendered_date'), DB::raw('count(*) as total'))
-            ->groupBy('surrendered_date')
-            ->orderBy('surrendered_date', 'asc')
-            ->orWhere('surrendered_date', 'like', '%' . $from . '%')
+       $surrendered  =  DB::table('compliance_main')
+            ->select(DB::raw('date_generated'), DB::raw('count(*) as total'))
+            ->groupBy('date_generated')
+            ->orderBy('date_generated', 'asc')
+            ->Where('date_generated', 'like', $from . '%')
             ->where('ownername','=',$user)
+            ->where('total_surrender','!=','0')
             ->take(7)
             ->get();
 
-        $expired_total  =  DB::table('Expiration_sub')
+        $expired_total  =  DB::table('expiration_sub')
             ->select(DB::raw('*'))
-            ->orWhere('expired_date', 'like', '%' . $from . '%')
+            ->Where('expired_date', 'like', $from . '%')
             ->where('ownername','=',$user)
             ->count();
 
-        $surrendered_total  =  DB::table('Compliance_sub')
+        $surrendered_total  =  DB::table('compliance_sub')
             ->select(DB::raw('*'))
-            ->orWhere('surrendered_date', 'like', '%' . $from . '%')
+            ->Where('surrendered_date', 'like', $from . '%')
             ->where('ownername','=',$user)
             ->count();
 
-        $recertificate  =  DB::table('Recertificate')
+        $recertificate  =  DB::table('recertificate')
             ->select(DB::raw('dateissued'), DB::raw('count(*) as total'))
             ->groupBy('dateissued')
             ->orderBy('dateissued', 'asc')
-            ->orWhere('dateissued', 'like', '%' . $from . '%')
+            ->Where('dateissued', 'like',$from . '%')
             ->where('ownername','=',$user)
             ->take(7)
             ->get();
 
-        $recs  =  DB::table('Recertificate')
+        $recs  =  DB::table('recertificate')
             ->select(DB::raw('*'))
-            ->orWhere('dateissued', 'like', '%' . $from . '%')
+            ->Where('dateissued', 'like', $from . '%')
             ->where('ownername','=',$user)
             ->count();
-        $recs_total  =  DB::table('Recertificate')
+        $recs_total  =  DB::table('recertificate')
             ->select(DB::raw('*'))
             ->where('ownername','=',$user)
             ->count();
@@ -319,28 +319,116 @@ class TransactController extends Controller
         $usersChart = new UserChart;
         $usersChart->minimalist(false);
         
-        $n = 12;
+       
+ for($i =0; $i < 12; $i++)
+      {
 
-        $currentDate = now()->subMonths($n)->format('M,Y');
-
-
-        $usersChart->labels(['January','February','March','April','May','June','July','August','September','October','November','December' ]);
+     
+        if($i==0){
+         $arr[$i] = 'January'.' '.$from;}
+         elseif($i==1) {
+         $arr[$i] = 'February'.' '.$from;}
+          elseif($i==2) {
+         $arr[$i] = 'March'.' '.$from;}
+          elseif($i==3) {
+         $arr[$i] = 'April'.' '.$from;}
+          elseif($i==4) {
+         $arr[$i] = 'May'.' '.$from;}
+          elseif($i==5) {
+         $arr[$i] = 'June'.' '.$from;}  
+          elseif($i==6) {
+         $arr[$i] = 'July'.' '.$from;}
+          elseif($i==7) {
+         $arr[$i] = 'August'.' '.$from;}
+          elseif($i==8) {
+         $arr[$i] = 'September'.' '.$from;}
+          elseif($i==9) {
+         $arr[$i] = 'October'.' '.$from;}
+          elseif($i==10) {
+         $arr[$i] = 'November'.' '.$from;}
+          elseif($i==11) {
+         $arr[$i] = 'December'.' '.$from;}
+      }
+   $month = $arr;
+        $usersChart->labels($arr);
 
         foreach ($recertificate as $key) {  
-        $usersChart->dataset('Total Issued Recs', 'bar', [$key->total,0])
+          $x =substr($key->dateissued,5,2);
+
+      for($i =0; $i < 12; $i++)
+      {
+         
+        if($i+1 == $x)
+        {
+         $arr[$i] = $key->total;
+        }
+        else{
+        $arr[$i] = 0;
+         }
+      }
+    $billing_issued = $arr;
+        $usersChart->dataset('Total Issued Recs', 'bar', $arr)
             ->backgroundcolor("rgba(99, 255, 132, 1.0)");
+          
             }
-         foreach ($expired as $key) {
-        $usersChart->dataset('Total Compliance', 'bar', [$key->total,0])
+         /*foreach ($expired as $key) {
+           $x =substr($key->expire_date,5,2);
+                for($i =0; $i < 12; $i++)
+                {
+                      if($i+1 == $x)
+                      {
+                       $arr[$i] = $key->total;
+                      }
+                      else{
+                      $arr[$i] = 0;
+                       }
+                }
+        $billing_expired = $arr;
+        $usersChart->dataset('Total Compliance', 'bar', $arr)
             ->backgroundcolor("rgba(255, 99, 132, 1.0)");
-          }
-            foreach ($rectransfer_req as $key) {
-        $usersChart->dataset('total Transfered', 'bar', [0,$key->volume])
+
+          } */
+
+        foreach ($surrendered as $key) {
+               $x =substr($key->date_generated,5,2);
+                    for($i =0; $i < 12; $i++)
+                    {
+                      if($i+1 == $x)
+                      {
+                       $arr[$i] = $key->total;
+                      }
+                      else{
+                      $arr[$i] = 0;
+                       }
+
+                      }
+           
+              
+$usersChart->dataset('Total Compliance', 'bar', $arr)
+            ->backgroundcolor("rgba(255, 99, 132, 1.0)");
+     }
+
+       
+         
+        foreach ($rectransfer_req as $key) {
+          $x =substr($key->updateddate,5,2);
+      for($i =0; $i < 12; $i++)
+      {
+        if($i+1 == $x)
+        {
+         $arr[$i] = $key->volume;
+        }
+        else{
+        $arr[$i] = 0;
+         }
+        }
+        $billing_rectransfer = $arr;
+        $usersChart->dataset('Total Transfered', 'bar', $arr)
             ->backgroundcolor("rgba(99, 132, 255, 1.0)");
           }
 
           $usersChart->dataset('', 'bar', [0]);
-
+        
   return  view('Users.monthly_rec_report')
         ->with(compact('recertificate'))
         ->with(compact('rectransfer_req'))
@@ -352,7 +440,9 @@ class TransactController extends Controller
         ->with(compact('expired'))
         ->with(compact('surrendered'))
         ->with(compact('surrendered_total'))
-        ->with(compact('expired_total'));
+        ->with(compact('expired_total'))
+        ->with(compact('user'))
+         ->with(compact('month'));
 
     }
 
@@ -378,8 +468,38 @@ class TransactController extends Controller
     public function update(Request $request, $id)
     {
      $status = 'A';
+      $rectransfer_req = DB::table('rectransfer_req')
+       ->where('id',$id)
+       ->get();
+       foreach ($rectransfer_req as $key) {
+         if($key->updateddate !="")
+         {
+             $sched = array("ownername"=>$key->ownername,"newownername"=>$key->newownername,"volume"=>$key->volume,"technology"=>$key->technology,"transfer_type"=>'One-off',"sched_date_transfer"=>$key->updateddate,"Remarks"=>'Pending',"Status"=>'Pending');
+             DB::table('schedule')->insert($sched);
+
+         }
+         else
+         {
+            $period = CarbonPeriod::create($key->start_date, '1 month', $key->end_date);
+
+              // Iterate over the period
+              foreach ($period as $date) {
+                  $dates[]= $date->format('Y-m');
+              }
+
+              // Convert the period to an array of dates
+              //$dates = $period->toArray();
+
+         
+
+              for($x = 0; $x < count($dates); $x++)
+              {
+                $sched = array("ownername"=>$key->ownername,"newownername"=>$key->newownername,"volume"=>$key->volume,"technology"=>$key->ownername,"transfer_type"=>'Standing Order',"sched_date_transfer"=>$dates[$x],"Remarks"=>'Pending',"Status"=>'Pending');
+                  DB::table('schedule')->insert($sched);
+              }
+         }
+       }
     DB::update('update rectransfer_req set xferStatus = ? where id = ?',[$status,$id]);
-     DB::update('update rectransfer_txn set xferStatus = ? where id = ?',[$status,$id]);
           return redirect('/Users/PendingTransactions');
     }
 
@@ -402,18 +522,23 @@ class TransactController extends Controller
        ->where('id',$id)
        ->delete();
 
-
-    $deletes = DB::table('rectransfer_txn')
-       ->where('ownername',"1ACNPC_G01" and  'newownername' ,"1AMPHAW_G01")
-       ->delete();
  
         return redirect('/Users/PendingTransactions')->with('failed','Transaction Cancelled.');
     }
 
      public function scheduletransact()
     {
+       $id = Auth::id();
+      $user_id  =  DB::table('users')
+      ->select('*')
+      ->where('id','=',$id)
+      ->get();
+      foreach ($user_id as $key) {
+       
+      }
          $schedule  =  DB::table('schedule')
             ->select('*')
+            ->where('ownername','=',$key->user_id)
             ->get();
 
         return view('Users.Scheduled', compact('schedule'));
@@ -433,15 +558,36 @@ class TransactController extends Controller
           ->where('ownername','=',$key->user_id)
           ->get();
 
+      $totalsur = DB::table('compliance_sub')
+          ->select('*')
+          ->where('ownername','=',$key->user_id)
+          ->count();
+
+          $total = DB::table('compliance')
+          ->select('*')
+          ->where('ownername','=',$key->user_id)
+          ->sum('totalrecs');
+
         return view('Users.compliance')
-        ->with(compact('compliance'));
+        ->with(compact('compliance'))
+          ->with(compact('total'))
+         ->with(compact('totalsur'));
      }
 
     
       public function expired()
-    {
+    { $id = Auth::id();
+      $user_id  =  DB::table('users')
+      ->select('*')
+      ->where('id','=',$id)
+      ->get();
+      foreach ($user_id as $key) {
+       
+      }
          $expiration  =  DB::table('expiration_main')
             ->select('*')
+             ->where('ownername','=',$key->user_id)
+            ->groupBy('expirydate')
             ->get();
 
         return view('Users.expired', compact('expiration'));
@@ -456,24 +602,78 @@ class TransactController extends Controller
       foreach ($user_id as $key) {
        
       }
-         $ownername = $request->input('ownername');
-        $dateissued = $request->input('dateissued');
-        $expirydate = $request->input('expirydate');
-        $technology = $request->input('technology');
-        $totalreqs = $request->input('totalrecs');
-        $surrender = $request->input('surrender_req');
+
         $datetoday = Carbon::now();
         $updateby = $key->user_id;
-    
-          
-               $data = array("ownername"=>$ownername,"dateissued"=>$dateissued,"expirydate"=>$expirydate,"technology"=>$technology,"totalrecs"=>$totalreqs,"total_surrender"=>$surrender,"date_generated"=>$datetoday,"updated_by"=>$updateby);
+   
+$data = $request->all();
+$ownername = $data['ownername'];
+$dateissued = $data['dateissued'];
+$expirydate = $data['expirydate'];
+$technology = $data['technology'];
+$totalrecs = $data['totalrecs'];
+$surrender = $data['surrender_req'];
 
-        $delete = DB::table('recertificate')
+$x =0;
+foreach($ownername as $ownername)
+{
+
+             $data =array("ownername"=>$updateby,
+              "dateissued"=>$dateissued[$x],
+              "expirydate"=>$expirydate[$x],
+              "technology"=>$technology[$x],
+              "totalrecs"=>$totalrecs[$x],
+              "total_surrender"=>$surrender[$x],
+              "date_generated"=>$datetoday,
+              "updated_by"=>$updateby);
+
+            DB::table('compliance_main')->insert($data);
+
+            $recertificate['data']  =  DB::table('recertificate')
+            ->select('*')
+            ->where('ownername','=',$updateby)
+            ->where('technology','=',$technology[$x])
+            ->where('dateissued','=',$dateissued[$x])
+            ->where('expirydate','=',$expirydate[$x])
+            ->take($surrender[$x])
+            ->get();
+             foreach ($recertificate['data'] as $key) {
+                    # code...
+                 $delete = DB::table('recertificate')
+                 ->where('serialnumber',$key->serialnumber)
+                 ->delete();
+
+        // $serialnumber = $request->input('serialnumber');
+            $data2 = array('serialnumber'=>$key->serialnumber,
+              "original_ownername"=>$key->ownername,
+              "ownername"=>$key->ownername,
+              "newownername"=>$key->ownername,
+              "generatorname"=>$key->generatorname,
+              "customerName"=>$key->customerName,
+              "xferRequested_by"=>$key->ownername,
+              "surrendered_date"=>$datetoday,
+              "xferStatus"=>'A',
+              "technology"=>$key->technology,
+              "vintage"=>$key->vintage,
+              "startDate"=>$key->startDate,
+              "endDate"=>$key->endDate,
+              "dateissued"=>$key->dateissued,
+              "expirydate"=>$key->expirydate,
+              "IDParent"=>$key->IDParent,
+              "typeFit"=>$key->typeFIT,
+              "Main_ID"=>$key->ID);
+             DB::table('compliance_sub')->insert($data2);
+  
+ }
+
+$x++;
+}
+       /* $delete = DB::table('recertificate')
        ->where('ownername',$ownername)
        ->take($surrender)
        ->delete();
-
-            DB::table('compliance_main')->insert($data);
+*/
+      
 
         return redirect('/Users/compliance')->with('success','Surrender RECs Successfully!');
     }

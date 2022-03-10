@@ -55,10 +55,11 @@
               <tr>
                 <td>
 
+ 
                 <p>Registration/Member Number: 
                   <b>021312445</b></p>
                     <p>Name of Organization:
-                      <b>Asian Carbon Neutral Power Corp.</b></p>
+                      <b>{{$user}}</b></p>
                     <p>Address:
                       <b>Makati city</b></p>
                   </td>
@@ -129,7 +130,7 @@
          
           <tr>
             
-              <td>{{$expired->expired_date}}</td>
+              <td>{{$expired->expirydate}}</td>
 
               <td>{{$expired->total}}</td>
               <td style="color:red">Expired</td>
@@ -142,7 +143,7 @@
          
           <tr>
             
-              <td>{{$surrendered->surrendered_date}}</td>
+              <td>{{$surrendered->date_generated}}</td>
 
               <td>{{$surrendered->total}}</td>
               <td style="color:red">Surrendered</td>
@@ -255,37 +256,17 @@
         </thead>
         <tbody style="text-align: center;">
 
-      
-         
+      @foreach($month as $month)
+        
         <tr>
-           <td>October 2021</td>
-           <td>100</td>
+           <td>{{$month}}</td>
+           <td>0</td>
             <td>10</td>
             <td>10</td>
             <td>20</td>
               </tr>
-        <tr>
-           <td>November 2021</td>
-           <td>90</td>
-            <td>10</td>
-            <td>10</td>
-            <td>30</td>
-              </tr>
-                <tr>
-           <td>December 2021</td>
-           <td>120</td>
-            <td>5</td>
-            <td>5</td>
-            <td>10</td>
-              </tr>
-              <tr>
-           <td>January 2022</td>
-           <td>100</td>
-            <td>15</td>
-            <td>10</td>
-            <td>10</td>
-              </tr>
-             
+ @endforeach
+     
              <tr>
             <td>-</td>
             <td>-</td>
@@ -311,10 +292,9 @@
   </div>
  
   <script>
-
-                var today = new Date();
-
-                var d = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
+var options = { year: 'numeric', month: 'long', day: 'numeric' };
+var today  = new Date();
+              d = today.toLocaleDateString("en-US", options);
 
                 document.getElementById("datetoday").innerHTML = d;
                 document.getElementById("today").innerHTML = d;
