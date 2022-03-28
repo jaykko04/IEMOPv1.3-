@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
+use Illuminate\Support\Facades\Auth;
+use DB;
 class LoginController extends Controller
 {
     /*
@@ -27,8 +28,22 @@ class LoginController extends Controller
      * @var string
      */
   public function redirectTo() {
-
-      return '/Users/home';   
+      $id = Auth::id();
+      $user_id  =  DB::table('users')
+      ->select('*')
+      ->where('id','=',$id)
+      ->get();
+        foreach ($user_id as $key) {
+         
+        }
+        $user = $key->role;
+       
+     if($user === 'admin'){
+        return '/Admin/home';
+    }
+    else{
+    return '/Users/home';  
+    }
   }
 
     /**

@@ -78,17 +78,18 @@
               @if($rectransfer_req->xferStatus=='P' && Auth::user()->user_id ==$rectransfer_req->ownername)
               <td  class="text-center">
              <a class="btn btn-danger" href="#" data-toggle="modal" data-target="#cancelModal{{$rectransfer_req->id}}" data-id="{{$rectransfer_req->id}}">
-                    Cancel
+                    <i class="fas fa-times" style="font-size: 20px"></i> Cancel
                 </a>
               </td>
              @else
              <td  class="text-center">
               <a class="btn btn-success" href="#" data-toggle="modal" data-target="#confirmModal{{$rectransfer_req->id}}" data-id="{{$rectransfer_req->id}}">
-                    Confirm
+                    <i class="fas fa-check" style="font-size: 20px"></i> Confirm
                 </a>
-
+                  </td>
+                  <td>
              <a class="btn btn-danger" href="#" data-toggle="modal" data-target="#cancelModal{{$rectransfer_req->id}}" data-id="{{$rectransfer_req->id}}">
-                    Cancel
+                    <i class="fas fa-times" style="font-size: 20px"></i> Cancel
                 </a>
               </td>
               @endif
@@ -110,11 +111,11 @@
                 <div class="modal-body">Select "Confirm" below if you are sure on this transaction.</div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal"><i class="fas fa-times" style="font-size: 20px"></i> No</button>
                        <form method="post" action="{{ route('AddTransaction.update', $rectransfer_req->id) }}">
                          @csrf
                          @method('PATCH')
-                           <button type="submit" class="btn btn-success">Confirm</button>
+                           <button type="submit" class="btn btn-success"><i class="fas fa-save" style="font-size: 20px"></i> Yes</button>
                         {{ csrf_field() }}
                     </form>
                 </div>
@@ -129,7 +130,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Cancel Transaction?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"> Cancel Transaction?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -137,11 +138,11 @@
                 <div class="modal-body">Select "Confirm" below if you are sure to cancel this transaction.</div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal"><i class="fas fa-times" style="font-size: 20px"></i> No</button>
                        <form method="post" action="{{ route('AddTransaction.destroy', $rectransfer_req->id) }}">
                          @csrf
                           @method('DELETE')
-                           <button type="submit" class="btn btn-danger">Confirm</button>
+                           <button type="submit" class="btn btn-danger"><i class="fas fa-trash" style="font-size: 20px"></i> Yes</button>
                         {{ csrf_field() }}
                     </form>
                 </div>

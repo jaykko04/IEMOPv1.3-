@@ -444,9 +444,9 @@
           </div>
               <hr class="mx-n3">
             <div class="px-5 py-4">
-              <button type="submit"  class="btn btn-primary btn-lg" >{{ __('Save') }}</button>
+              <button type="submit"  class="btn btn-primary btn-lg" ><i class="fas fa-save" style="font-size: 20px"></i> Save</button>
           <!-- data-toggle="modal" data-target="#saveModal" -->
-             <input type="reset"  class="btn btn-primary btn-lg" value="Reset">
+             <button type="reset"  class="btn btn-primary btn-lg" ><i class="fas fa-undo" style="font-size: 20px"></i> Save</button>
              </div>
           </div>
         </form>

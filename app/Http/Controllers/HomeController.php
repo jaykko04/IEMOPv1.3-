@@ -26,6 +26,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+    public function admin()
+    {
+       
+        return view('Admin.home');
+    }
+
     public function index()
     {
              $id = Auth::id();
@@ -63,6 +70,7 @@ class HomeController extends Controller
         return view('Users.home')->with(compact('Recertificate_count'))
         ->with(compact('expired_count'))
         ->with(compact('sucessful_transaction'))
-        ->with(compact('pending_transaction'));
+        ->with(compact('pending_transaction'))
+        ->with('Success','Welcome '.$user);;
     }
 }
