@@ -26,7 +26,16 @@ Route::get('/Admin/home', [App\Http\Controllers\HomeController::class, 'admin'])
 
 Route::get('/Admin/Registration', [App\Http\Controllers\Admin\Admincontroller::class, 'Registration'])->name('Registration')->middleware('role:admin');
 
+Route::get('/Admin/Registration/Edit/{id}', [App\Http\Controllers\Admin\Admincontroller::class, 'EditMandatedParticipants'])->name('EditMandatedParticipants')->middleware('role:admin');
+
 Route::get('/Admin/View', [App\Http\Controllers\Admin\Admincontroller::class, 'ViewMandatedParticipants'])->name('ViewMandatedParticipants')->middleware('role:admin');
+
+Route::post('Storemandated', [App\Http\Controllers\Admin\Admincontroller::class, 'Storemandated'])->name('Storemandated')->middleware('role:admin');
+
+
+
+
+
 
 Route::get('/Users/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('role:user');
 

@@ -10,7 +10,7 @@
                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                   <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
                   <li class="breadcrumb-item"><a href="#">Registration</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Add New</li>
+                  <li class="breadcrumb-item active" aria-current="page">Edit Details</li>
                 </ol>
               </nav>
             </div>
@@ -67,7 +67,7 @@
               </div>
               @endif
 
-                <h3>{{ __('PARTICIPANT INFORMATION') }}</h3>
+                <h3>{{ __('PARTICIPANT EDIT INFORMATION') }}</h3>
           <hr class="mx-n3">
             <div class="row align-items-center pt-4 pb-3">
                  
@@ -77,8 +77,10 @@
 
               </div>
               <div class="col-xl-10 order-xl-2">
-                               
-                <input type="text" class="form-control form-control-lg" name="part_name" id="part_name"/>
+                             @foreach($EditMandatedParticipants as $EditMandatedParticipants)
+
+                              @endforeach
+                <input type="text" class="form-control form-control-lg" name="part_name" id="part_name" value="{{$EditMandatedParticipants->participant_name}}" />
                
 
               </div>
@@ -95,10 +97,13 @@
 
           <select class="form-control form-control-lg" name="rt" id="rt" >
            <option value="">Choose</option>
-            @foreach($registrationtype as $key => $value)
-              <option value="{{$key}}">{{$value}}</option>
-           
-            @endforeach
+              @foreach($registrationtype as $key=>$value)
+                @if($EditMandatedParticipants->registration_type == $key)
+                <option value="{{$key}}" {{ $EditMandatedParticipants->registration_type == $key ? 'selected' : '' }}>{{$value}}</option>
+                @else
+                <option value="{{$key}}">{{$value}}</option>
+                @endif
+              @endforeach
           </select>
               
               </div>
@@ -115,9 +120,12 @@
 
             <select class="form-control form-control-lg" name="ct" id="ct" >
              <option value="">Choose</option>
-              @foreach($categorytype as $key => $value)
+           @foreach($categorytype as $key=>$value)
+                @if($EditMandatedParticipants->category_type == $key)
+                <option value="{{$key}}" {{ $EditMandatedParticipants->category_type == $key ? 'selected' : '' }}>{{$value}}</option>
+                @else
                 <option value="{{$key}}">{{$value}}</option>
-             
+                @endif
               @endforeach
             </select>
 
@@ -133,7 +141,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-                <input type="text" class="form-control form-control-lg" name="rn" id="rn" />
+                <input type="text" class="form-control form-control-lg" name="rn" id="rn" value="{{$EditMandatedParticipants->resource_name}}"/>
 
               </div>
             </div>
@@ -149,9 +157,12 @@
 
              <select class="form-control form-control-lg" name="ft" id="ft" >
              <option value="">Choose</option>
-              @foreach($facilitytype as $key => $value)
+            @foreach($facilitytype as $key=>$value)
+                @if($EditMandatedParticipants->facility_type == $key)
+                <option value="{{$key}}" {{ $EditMandatedParticipants->facility_type == $key ? 'selected' : '' }}>{{$value}}</option>
+                @else
                 <option value="{{$key}}">{{$value}}</option>
-             
+                @endif
               @endforeach
             </select>
               </div>
@@ -168,9 +179,12 @@
 
               <select class="form-control form-control-lg" name="NMFhst" id="NMFhst" >
              <option value="">Choose</option>
-              @foreach($notmultifuel as $key => $value)
+           @foreach($notmultifuel as $key=>$value)
+                @if($EditMandatedParticipants->notMultiFuelHybridSystemType == $key)
+                <option value="{{$key}}" {{ $EditMandatedParticipants->notMultiFuelHybridSystemType == $key ? 'selected' : '' }}>{{$value}}</option>
+                @else
                 <option value="{{$key}}">{{$value}}</option>
-             
+                @endif
               @endforeach
             </select>
               </div>
@@ -186,9 +200,12 @@
               <div class="col-xl-10 order-xl-1">
                  <select class="form-control form-control-lg" name="tf" id="tf" >
              <option value="">Choose</option>
-              @foreach($typefit as $key => $value)
+             @foreach($typefit as $key=>$value)
+                @if($EditMandatedParticipants->typeFit == $key)
+                <option value="{{$key}}" {{ $EditMandatedParticipants->typeFit == $key ? 'selected' : '' }}>{{$value}}</option>
+                @else
                 <option value="{{$key}}">{{$value}}</option>
-             
+                @endif
               @endforeach
             </select>
               </div>
@@ -202,7 +219,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="ec" id="ec" />
+                <input type="text" class="form-control form-control-lg" name="ec" id="ec" value="{{$EditMandatedParticipants->eligible_capacity}}"/>
 
               </div>
             </div>
@@ -215,7 +232,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="rc" id="rc" />
+                <input type="text" class="form-control form-control-lg" name="rc" id="rc" value="{{$EditMandatedParticipants->reg_capacity}}"/>
 
               </div>
             </div>
@@ -229,12 +246,15 @@
               </div>
               <div class="col-xl-10 order-xl-1">
                  <select class="form-control form-control-lg" name="type" id="type" >
-                <option value="">Choose</option>
-              @foreach($type as $key => $value)
-                <option value="{{$value}}">{{$value}}</option>
-             
-              @endforeach
-            </select>
+                  <option value="">Choose</option>
+                    @foreach($type as $key=>$value)
+                      @if($EditMandatedParticipants->Type == $value)
+                      <option value="{{$value}}" {{ $EditMandatedParticipants->Type == $value ? 'selected' : '' }}>{{$value}}</option>
+                      @else
+                      <option value="{{$value}}">{{$value}}</option>
+                      @endif
+                    @endforeach
+                </select>
               </div>
             </div>
              
@@ -247,7 +267,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="vintage" id="vintage" />
+                <input type="text" class="form-control form-control-lg" name="vintage" id="vintage" value="{{$EditMandatedParticipants->vintage}}"/>
 
               </div>
             </div>
@@ -260,7 +280,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="rnn" id="rnn" />
+                <input type="text" class="form-control form-control-lg" name="rnn" id="rnn" value="{{$EditMandatedParticipants->resource_name_new}}"/>
 
               </div>
             </div>
@@ -273,7 +293,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="remarks" id="remarks" />
+                <input type="text" class="form-control form-control-lg" name="remarks" id="remarks" value="{{$EditMandatedParticipants->remarks}}"/>
 
               </div>
             </div>
@@ -288,9 +308,12 @@
               <div class="col-xl-10 order-xl-1">
                  <select class="form-control form-control-lg" name="region" id="region" >
              <option value="">Choose</option>
-              @foreach($region as $key => $value)
+             @foreach($region as $key=>$value)
+                @if($EditMandatedParticipants->region == $key)
+                <option value="{{$key}}" {{ $EditMandatedParticipants->region == $key ? 'selected' : '' }}>{{$value}}</option>
+                @else
                 <option value="{{$key}}">{{$value}}</option>
-             
+                @endif
               @endforeach
             </select>
               </div>
@@ -299,7 +322,8 @@
             <div class="px-5 py-4">
               <button type="submit"  class="btn btn-primary btn-lg" >{{ __('Save') }}</button>
           <!-- data-toggle="modal" data-target="#saveModal" -->
-             <input type="reset"  class="btn btn-primary btn-lg" value="Reset">
+             
+          <a href="{{url('/Admin/View')}}" class="btn btn-primary btn-lg">Back</a>
              </div>
           </div>
         </form>

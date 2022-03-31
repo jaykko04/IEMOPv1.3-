@@ -32,15 +32,128 @@ class Admincontroller extends Controller
     
     public function Registration()
     {
-       
-        return view('Admin.registration');
+       $path1 = storage_path() . "/app/public/JSON/registrationtype.json"; 
+        $path2 = storage_path() . "/app/public/JSON/categorytype.json";
+        $path3 = storage_path() . "/app/public/JSON/facilitytype.json";
+        $path4 = storage_path() . "/app/public/JSON/notmultifuel.json";
+        $path5 = storage_path() . "/app/public/JSON/typefit.json";
+        $path6 = storage_path() . "/app/public/JSON/region.json";
+        $path7 = storage_path() . "/app/public/JSON/type.json";
+
+    $registrationtype = json_decode(file_get_contents($path1), true); 
+     $categorytype = json_decode(file_get_contents($path2), true);
+      $facilitytype = json_decode(file_get_contents($path3), true); 
+      $notmultifuel = json_decode(file_get_contents($path4), true);
+      $typefit = json_decode(file_get_contents($path5), true); 
+      $region = json_decode(file_get_contents($path6), true);
+      $type = json_decode(file_get_contents($path7), true); 
+    
+        return view('Admin.registration')->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
     }
     public function ViewMandatedParticipants()
     {
         $ViewMandatedParticipants  =  DB::table('mandated_participants')
             ->select('*')
             ->get();
-        return view('Admin.mandated_participants')->with(compact('ViewMandatedParticipants'));
+        $path1 = storage_path() . "/app/public/JSON/registrationtype.json"; 
+        $path2 = storage_path() . "/app/public/JSON/categorytype.json";
+        $path3 = storage_path() . "/app/public/JSON/facilitytype.json";
+        $path4 = storage_path() . "/app/public/JSON/notmultifuel.json";
+        $path5 = storage_path() . "/app/public/JSON/typefit.json";
+        $path6 = storage_path() . "/app/public/JSON/region.json";
+        $path7 = storage_path() . "/app/public/JSON/type.json";
+
+          $registrationtype = json_decode(file_get_contents($path1), true); 
+          $categorytype = json_decode(file_get_contents($path2), true);
+          $facilitytype = json_decode(file_get_contents($path3), true); 
+          $notmultifuel = json_decode(file_get_contents($path4), true);
+          $typefit = json_decode(file_get_contents($path5), true); 
+          $region = json_decode(file_get_contents($path6), true);
+          $type = json_decode(file_get_contents($path7), true); 
+        
+        return view('Admin.mandated_participants')->with(compact('ViewMandatedParticipants'))->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
+    
+    }
+     public function EditMandatedParticipants( $id)
+    {
+        $EditMandatedParticipants  =  DB::table('mandated_participants')
+            ->select('*')
+            ->where('id',$id)
+            ->get();
+    $path1 = storage_path() . "/app/public/JSON/registrationtype.json"; 
+        $path2 = storage_path() . "/app/public/JSON/categorytype.json";
+        $path3 = storage_path() . "/app/public/JSON/facilitytype.json";
+        $path4 = storage_path() . "/app/public/JSON/notmultifuel.json";
+        $path5 = storage_path() . "/app/public/JSON/typefit.json";
+        $path6 = storage_path() . "/app/public/JSON/region.json";
+        $path7 = storage_path() . "/app/public/JSON/type.json";
+
+    $registrationtype = json_decode(file_get_contents($path1), true); 
+     $categorytype = json_decode(file_get_contents($path2), true);
+      $facilitytype = json_decode(file_get_contents($path3), true); 
+      $notmultifuel = json_decode(file_get_contents($path4), true);
+      $typefit = json_decode(file_get_contents($path5), true); 
+      $region = json_decode(file_get_contents($path6), true);
+      $type = json_decode(file_get_contents($path7), true); 
+    
+
+        return view('Admin.registration_edit')->with(compact('EditMandatedParticipants'))->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
+    }
+    public function Storemandated(Request $request)
+    {
+        $part_name = $request->input('part_name');
+        $rt = $request->input('rt');
+        $ct = $request->input('ct');
+        $rn = $request->input('rn');
+        $ft = $request->input('ft');
+        $NMFhst = $request->input('NMFhst');
+        $tf = $request->input('tf');
+        $ec = $request->input('ec');
+        $rc = $request->input('rc');
+        $type = $request->input('type');
+        $vintage = $request->input('vintage');
+        $status = $request->input('status');
+        $rnn = $request->input('rnn');
+        $remarks = $request->input('remarks');
+        $region = $request->input('region');
+        $updatedby = 'admin';
+         $status = '1';
+        $updateddate = Carbon::now()->format('Y-m-d');
+
+        $request->validate([
+        'part_name' => 'required',
+          'rt' => 'required',
+          'ct' => 'required',
+          'rn'=>'required',
+           'ft' => 'required',
+          'NMFhst' => 'required',
+          'tf' => 'required',
+          'ec'=>'required', 
+          'rc' => 'required',
+          'type' => 'required',
+           'rnn' => 'required',
+          'remarks' => 'required',
+          'region' => 'required'
+       ]);
+
+        $data2 = array("participant_name"=>$part_name,
+            "registration_type"=>$rt,
+            "category_type"=>$ct,
+            "resource_name"=>$rn,
+            "facility_type"=>$ft,
+            "notMultiFuelHybridSystemType"=>$NMFhst,
+            "typeFit"=>$tf,
+            "eligible_capacity"=>$ec,
+            "reg_capacity"=>$rc,
+            "Type"=>$type,
+            "vintage"=> $vintage,
+            "status"=>$status,
+            "resource_name_new"=>$rnn,
+            "remarks"=> $remarks,
+            "region"=>$region);
+           DB::table('mandated_participants')->insert($data2);
+        
+        return redirect('/Admin/View')->with('success','Successfuly added!');
     }
   
 }
