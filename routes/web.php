@@ -28,6 +28,10 @@ Route::get('/Admin/Registration', [App\Http\Controllers\Admin\Admincontroller::c
 
 Route::get('/Admin/Registration/Edit/{id}', [App\Http\Controllers\Admin\Admincontroller::class, 'EditMandatedParticipants'])->name('EditMandatedParticipants')->middleware('role:admin');
 
+Route::post('Updatemandated', [App\Http\Controllers\Admin\Admincontroller::class, 'Updatemandated'])->name('Updatemandated')->middleware('role:admin');
+
+Route::post('Deletemandated', [App\Http\Controllers\Admin\Admincontroller::class, 'Deletemandated'])->name('Deletemandated')->middleware('role:admin');
+
 Route::get('/Admin/View', [App\Http\Controllers\Admin\Admincontroller::class, 'ViewMandatedParticipants'])->name('ViewMandatedParticipants')->middleware('role:admin');
 
 Route::post('Storemandated', [App\Http\Controllers\Admin\Admincontroller::class, 'Storemandated'])->name('Storemandated')->middleware('role:admin');
@@ -54,7 +58,7 @@ Route::get('/Users/compliance', [App\Http\Controllers\User\TransactController::c
 Route::post('/Users/compliance', [App\Http\Controllers\User\TransactController::class, 'compliancereq'])->name('compliancereq')->middleware('role:user');
 Route::get('/Users/expired', [App\Http\Controllers\User\TransactController::class, 'expired'])->name('expired')->middleware('role:user');
 
-Route::resource('AddTransaction', TransactController::class);
+Route::resource('AddTransaction', TransactController::class)->middleware('role:user');;
 
 });
 Route::get('/rtyuiodkasfaksdfnmvcnlvfagylrvfvDAV/error/a/qdfghjkdlaswuq/1dasnjd/asd123o12t4e7tgykfga26et8of1yfe19e7rd1fo2g31t307812t4g812ypodwte812o6', [App\Http\Controllers\User\TransactController::class, 'error']);

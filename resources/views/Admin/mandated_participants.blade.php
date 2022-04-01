@@ -28,6 +28,9 @@
       {{ session()->get('failed') }}  
     </div><br />
     @endif
+
+    <form method="post" action="{{route('Deletemandated')}}" > 
+        @csrf <!-- {{ csrf_field() }} -->         
 <!-- table table-bordered  -->
 <div class="table-responsive py-4">
      <table id="myTable" class="table table-bordered yajra-datatable" style="width:100%">
@@ -40,6 +43,7 @@
                 <th>Resource Name</th>
                  <th>Facility Type</th>
                 <th>Not Multi Fuel...</th>
+                <th>Effectivity Date</th>
                 <th>Type Fit</th>
                 <th>Eligible Capacity</th>
                  <th>Reg Capacity</th>
@@ -84,7 +88,7 @@
                 <td>{{$value4}}</td>
                 @endif
               @endforeach
-
+                <td> {{$ViewMandatedParticipants->effectivity_date}} </td>
             @foreach($typefit as $key5=>$value5)
                 @if($ViewMandatedParticipants->typeFit == $key5)
                 <td>{{$value5}}</td>
@@ -104,16 +108,16 @@
                 <td>{{$value6}}</td>
                 @endif
               @endforeach
-
-            <td><a href="{{url('/Admin/Registration/Edit',$ViewMandatedParticipants->id)}}"><i class="fas fa-edit"></i> Edit</a> &emsp;
-              <a href=""><i class="fas fa-trash"></i>Delete</a></td>
+              <input type="hidden" name="id" id="id" value="{{$ViewMandatedParticipants->id}}">
+            <td><a href="{{url('/Admin/Registration/Edit',$ViewMandatedParticipants->id)}}" onclick="return confirm('Are you sure you want to edit {{$ViewMandatedParticipants->participant_name}} ?')"><i class="fas fa-edit"></i> Edit</a> &emsp;
+              <button type="submit" onclick="return confirm('Are you sure you want to Delete {{$ViewMandatedParticipants->participant_name}} ?')"><i class="fas fa-trash"></i>{{ __('Delete') }}</button></td>
           </tr>
           @endforeach
         </tbody>
       
     </table>
 </div>
-  
+  </form>
      <script type="text/javascript">
     $(document).ready( function () {
     $('#myTable').DataTable();

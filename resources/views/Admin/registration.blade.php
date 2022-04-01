@@ -166,15 +166,24 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-              <select class="form-control form-control-lg" name="NMFhst" id="NMFhst" >
+              <select class="form-control form-control-lg" name="NMFhst" id="NMFhst" onchange="myFunctions()">
              <option value="">Choose</option>
               @foreach($notmultifuel as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
              
               @endforeach
             </select>
+
               </div>
             </div>
+            <div id="effect_date" style="display: none"> 
+                 <label for="others"  style="font-size: 30px">{{ __('Effectivity_date* ') }}</label>
+                  <br>
+                  <div class="col-xl-6 order-xl-3">
+                  <input type="date" class="form-control form-control-lg"  id="eff_date" name="eff_date">
+                 </div>
+
+              </div>
             <div class="row align-items-center pt-4 pb-3">
                  
 
@@ -297,9 +306,9 @@
             </div>
               <hr class="mx-n3">
             <div class="px-5 py-4">
-              <button type="submit"  class="btn btn-primary btn-lg" >{{ __('Save') }}</button>
+              <button type="submit"  class="btn btn-primary btn-lg" onclick="return confirm('Are you sure you want to submit this form?')" >{{ __('Save') }}</button>
           <!-- data-toggle="modal" data-target="#saveModal" -->
-             <input type="reset"  class="btn btn-primary btn-lg" value="Reset">
+             <input type="reset"  class="btn btn-primary btn-lg" value="Reset" onclick="return confirm('Reset this form?')">
              </div>
           </div>
         </form>
@@ -308,4 +317,25 @@
       </div>
     </div>
   </div>
+
+<script type="text/javascript">
+                        function myFunctions(){
+                       var y = document.getElementById("effect_date");
+                       var a = document.getElementById("remove");
+                     
+                     
+                      if ($( "#NMFhst" ).val() === "1"){
+                          
+                            y.style.display = "block";
+                            a.style.display = "none";
+                          }
+                   
+                      else {
+                            y.style.display = "none";
+                            a.style.display = "none";
+                          }
+                                                    }
+                
+                </script>     
+       
 @endsection

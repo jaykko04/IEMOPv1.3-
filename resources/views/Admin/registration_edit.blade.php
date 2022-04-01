@@ -38,7 +38,7 @@
                   </div><br />
                 @endif
                
-               <form method="post" action="{{ route('Storemandated') }}" enctype="multipart/form-data"> 
+               <form method="post" action="{{ route('Updatemandated') }}" enctype="multipart/form-data"> 
                 @csrf <!-- {{ csrf_field() }} -->
                 <div style="text-align: right">
                    <label class="form-control-label">{{ __('Date Today') }} 
@@ -318,12 +318,13 @@
             </select>
               </div>
             </div>
+             <input type="hidden" class="form-control form-control-lg" name="id" id="id" value="{{$EditMandatedParticipants->id}}"/>
               <hr class="mx-n3">
             <div class="px-5 py-4">
-              <button type="submit"  class="btn btn-primary btn-lg" >{{ __('Save') }}</button>
+              <button type="submit"  class="btn btn-primary btn-lg" onclick="return confirm('Are you sure you want to submit this form?')" >{{ __('Update') }}</button>
           <!-- data-toggle="modal" data-target="#saveModal" -->
              
-          <a href="{{url('/Admin/View')}}" class="btn btn-primary btn-lg">Back</a>
+          <a href="{{url('/Admin/View')}}" class="btn btn-primary btn-lg" onclick="return confirm('Changes will be discard. Continue?')">Back</a>
              </div>
           </div>
         </form>

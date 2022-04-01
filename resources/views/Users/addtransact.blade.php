@@ -71,6 +71,7 @@
               @endif
 
                 <h3>{{ __('I.  SELLING RENEWABLE ENERGY TRADING PARTICIPANT INFORMATION') }}</h3>
+                
                  @foreach($seller as $org_names)
                   @endforeach
             <div class="row align-items-center pt-4 pb-3">

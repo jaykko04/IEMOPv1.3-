@@ -53,8 +53,10 @@ class Admincontroller extends Controller
     public function ViewMandatedParticipants()
     {
         $ViewMandatedParticipants  =  DB::table('mandated_participants')
-            ->select('*')
+            ->select('mandated_participants.*','mandated_participant_pef.effectivity_date')
+            ->leftjoin('mandated_participant_pef', 'mandated_participants.id', '=', 'mandated_participant_pef.mandated_participant_id')
             ->get();
+     
         $path1 = storage_path() . "/app/public/JSON/registrationtype.json"; 
         $path2 = storage_path() . "/app/public/JSON/categorytype.json";
         $path3 = storage_path() . "/app/public/JSON/facilitytype.json";
@@ -74,7 +76,7 @@ class Admincontroller extends Controller
         return view('Admin.mandated_participants')->with(compact('ViewMandatedParticipants'))->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
     
     }
-     public function EditMandatedParticipants( $id)
+     public function EditMandatedParticipants($id)
     {
         $EditMandatedParticipants  =  DB::table('mandated_participants')
             ->select('*')
@@ -107,6 +109,7 @@ class Admincontroller extends Controller
         $rn = $request->input('rn');
         $ft = $request->input('ft');
         $NMFhst = $request->input('NMFhst');
+        $eff_date = $request->input('eff_date');
         $tf = $request->input('tf');
         $ec = $request->input('ec');
         $rc = $request->input('rc');
@@ -119,7 +122,53 @@ class Admincontroller extends Controller
         $updatedby = 'admin';
          $status = '1';
         $updateddate = Carbon::now()->format('Y-m-d');
-
+        if($NMFhst == 1)
+        {
+            $request->validate([
+        'part_name' => 'required',
+          'rt' => 'required',
+          'ct' => 'required',
+          'rn'=>'required',
+           'ft' => 'required',
+          'NMFhst' => 'required',
+          'eff_date' => 'required',
+          'tf' => 'required',
+          'ec'=>'required', 
+          'rc' => 'required',
+          'type' => 'required',
+           'rnn' => 'required',
+          'remarks' => 'required',
+          'region' => 'required'
+       ]);
+            $data1 = array("participant_name"=>$part_name,
+            "registration_type"=>$rt,
+            "category_type"=>$ct,
+            "resource_name"=>$rn,
+            "facility_type"=>$ft,
+            "notMultiFuelHybridSystemType"=>$NMFhst,
+            "typeFit"=>$tf,
+            "eligible_capacity"=>$ec,
+            "reg_capacity"=>$rc,
+            "Type"=>$type,
+            "vintage"=> $vintage,
+            "status"=>$status,
+            "resource_name_new"=>$rnn,
+            "remarks"=> $remarks,
+            "region"=>$region);
+         $ViewMandatedParticipants  =  DB::table('mandated_participants')
+                    ->select('id')
+                    ->get();
+            foreach ($ViewMandatedParticipants as $key => $value) {
+                
+            }
+            $man_id = $value->id + 1;
+                
+             $data3 = array("mandated_participant_id"=>$man_id,"eligible_capacity"=>$ec,
+            "reg_capacity"=>$rc,"effectivity_date"=>$eff_date);
+           DB::table('mandated_participants')->insert($data1);
+           DB::table('mandated_participant_pef')->insert($data3);
+        }
+        else{
         $request->validate([
         'part_name' => 'required',
           'rt' => 'required',
@@ -152,8 +201,73 @@ class Admincontroller extends Controller
             "remarks"=> $remarks,
             "region"=>$region);
            DB::table('mandated_participants')->insert($data2);
-        
+        }
         return redirect('/Admin/View')->with('success','Successfuly added!');
+    }
+
+    public function Updatemandated(Request $request)
+    {
+         $id = $request->input('id');
+        $part_name = $request->input('part_name');
+        $rt = $request->input('rt');
+        $ct = $request->input('ct');
+        $rn = $request->input('rn');
+        $ft = $request->input('ft');
+        $NMFhst = $request->input('NMFhst');
+        $tf = $request->input('tf');
+        $ec = $request->input('ec');
+        $rc = $request->input('rc');
+        $type = $request->input('type');
+        $vintage = $request->input('vintage');
+        $status = $request->input('status');
+        $rnn = $request->input('rnn');
+        $remarks = $request->input('remarks');
+        $region = $request->input('region');
+        $updatedby = 'admin';
+        $status = '1';
+        $updateddate = Carbon::now()->format('Y-m-d');
+
+        $request->validate([
+        'part_name' => 'required',
+          'rt' => 'required',
+          'ct' => 'required',
+          'rn'=>'required',
+           'ft' => 'required',
+          'NMFhst' => 'required',
+          'tf' => 'required',
+          'ec'=>'required', 
+          'rc' => 'required',
+          'type' => 'required',
+           'rnn' => 'required',
+          'remarks' => 'required',
+          'region' => 'required'
+       ]);
+ 
+            DB::update('update mandated_participants set participant_name= ?,
+                registration_type= ?,
+                category_type= ?,
+                resource_name= ?,
+                facility_type= ?,
+                notMultiFuelHybridSystemType= ?,
+                typeFit= ?,
+                eligible_capacity= ?,
+                reg_capacity= ?,
+                Type= ?,
+                vintage= ?,
+                status= ?,
+                resource_name_new= ?,
+                remarks= ?,
+                region= ?
+                 where id = ?',[$part_name,$rt,$ct,$rn,$ft,$NMFhst,$tf,$ec,$rc,$type,$vintage,$status,$rnn,$remarks,$region,$id]);
+        return redirect('/Admin/View')->with('success','Edited Successfuly!');
+    }
+      public function Deletemandated(Request $request)
+    {
+         $id = $request->input('id');
+         
+         DB::update('delete from mandated_participants where id = ?',[$id]);
+            
+        return redirect('/Admin/View')->with('success','Deleted Successfuly!');
     }
   
 }
