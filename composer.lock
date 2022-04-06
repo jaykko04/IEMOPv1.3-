@@ -9,7 +9,7 @@
     "packages": [
         {
             "name": "asm89/stack-cors",
-            "version": "v2.1.2",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/asm89/stack-cors.git",
