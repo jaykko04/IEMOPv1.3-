@@ -50,6 +50,9 @@ class Admincontroller extends Controller
     
         return view('Admin.registration')->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
     }
+
+
+    
     public function ViewMandatedParticipants()
     {
         $ViewMandatedParticipants  =  DB::table('mandated_participants')
@@ -76,11 +79,19 @@ class Admincontroller extends Controller
         return view('Admin.mandated_participants')->with(compact('ViewMandatedParticipants'))->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
     
     }
+
+
+
      public function EditMandatedParticipants($id)
     {
         $EditMandatedParticipants  =  DB::table('mandated_participants')
             ->select('*')
             ->where('id',$id)
+            ->get();
+
+        $EditParticipant_pef  =  DB::table('mandated_participant_pef')
+            ->select('*')
+            ->where('mandated_participant_id',$id)
             ->get();
     $path1 = storage_path() . "/app/public/JSON/registrationtype.json"; 
         $path2 = storage_path() . "/app/public/JSON/categorytype.json";
@@ -99,48 +110,54 @@ class Admincontroller extends Controller
       $type = json_decode(file_get_contents($path7), true); 
     
 
-        return view('Admin.registration_edit')->with(compact('EditMandatedParticipants'))->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
+        return view('Admin.registration_edit')->with(compact('EditMandatedParticipants'))->with(compact('EditParticipant_pef'))->with(compact('registrationtype'))->with(compact('categorytype'))->with(compact('facilitytype'))->with(compact('notmultifuel'))->with(compact('typefit'))->with(compact('region'))->with(compact('type'));
     }
+
+
+
     public function Storemandated(Request $request)
     {
-        $part_name = $request->input('part_name');
-        $rt = $request->input('rt');
-        $ct = $request->input('ct');
-        $rn = $request->input('rn');
-        $ft = $request->input('ft');
-        $NMFhst = $request->input('NMFhst');
-        $eff_date = $request->input('eff_date');
-        $tf = $request->input('tf');
-        $ec = $request->input('ec');
-        $rc = $request->input('rc');
+        $part_name = $request->input('participant-name');
+         $short_name = $request->input('short-name');
+        $rt = $request->input('registration-type');
+        $ct = $request->input('category-type');
+        $rn = $request->input('resource-name');
+        $ft = $request->input('facility-type');
+        $NMFhst = $request->input('NotMultiFuelhybrid-systemtype');
+        $eff_date = $request->input('effectivity-date');
+        $tf = $request->input('type-fit');
+        $ec = $request->input('eligible-capacity');
+        $rc = $request->input('reg-capacity');
         $type = $request->input('type');
         $vintage = $request->input('vintage');
         $status = $request->input('status');
-        $rnn = $request->input('rnn');
+        $rnn = $request->input('resource-name-new');
         $remarks = $request->input('remarks');
         $region = $request->input('region');
         $updatedby = 'admin';
-         $status = '1';
+        $status = '1';
         $updateddate = Carbon::now()->format('Y-m-d');
         if($NMFhst == 1)
         {
             $request->validate([
-        'part_name' => 'required',
-          'rt' => 'required',
-          'ct' => 'required',
-          'rn'=>'required',
-           'ft' => 'required',
-          'NMFhst' => 'required',
-          'eff_date' => 'required',
-          'tf' => 'required',
-          'ec'=>'required', 
-          'rc' => 'required',
+        'participant-name' => 'required|max:30',
+         'short-name' => 'required|max:30',
+          'registration-type' => 'required',
+          'category-type' => 'required',
+          'resource-name'=>'required|max:12',
+           'facility-type' => 'required',
+          'NotMultiFuelhybrid-systemtype' => 'required',
+          'effectivity-date'=>'required',
+          'type-fit' => 'required',
+          'eligible-capacity'=>"required|numeric|between:0,99.0000000000",
+          'reg-capacity' => "required|numeric|between:0,99.0000000000",
           'type' => 'required',
-           'rnn' => 'required',
+           'resource-name-new' => 'required|max:12',
           'remarks' => 'required',
           'region' => 'required'
        ]);
             $data1 = array("participant_name"=>$part_name,
+            "short_name"=>$short_name,
             "registration_type"=>$rt,
             "category_type"=>$ct,
             "resource_name"=>$rn,
@@ -151,6 +168,7 @@ class Admincontroller extends Controller
             "reg_capacity"=>$rc,
             "Type"=>$type,
             "vintage"=> $vintage,
+             "updated_by"=> $updatedby,
             "status"=>$status,
             "resource_name_new"=>$rnn,
             "remarks"=> $remarks,
@@ -170,22 +188,24 @@ class Admincontroller extends Controller
         }
         else{
         $request->validate([
-        'part_name' => 'required',
-          'rt' => 'required',
-          'ct' => 'required',
-          'rn'=>'required',
-           'ft' => 'required',
-          'NMFhst' => 'required',
-          'tf' => 'required',
-          'ec'=>'required', 
-          'rc' => 'required',
+        'participant-name' => 'required|max:30',
+         'short-name' => 'required|max:30',
+          'registration-type' => 'required',
+          'category-type' => 'required',
+          'resource-name'=>'required|max:12',
+           'facility-type' => 'required',
+          'NotMultiFuelhybrid-systemtype' => 'required',
+          'type-fit' => 'required',
+          'eligible-capacity'=>"required|numeric|between:0,99.0000000000",
+          'reg-capacity' => "required|numeric|between:0,99.0000000000",
           'type' => 'required',
-           'rnn' => 'required',
+           'resource-name-new' => 'required|max:12',
           'remarks' => 'required',
           'region' => 'required'
        ]);
 
         $data2 = array("participant_name"=>$part_name,
+          "short_name"=>$short_name,
             "registration_type"=>$rt,
             "category_type"=>$ct,
             "resource_name"=>$rn,
@@ -196,6 +216,7 @@ class Admincontroller extends Controller
             "reg_capacity"=>$rc,
             "Type"=>$type,
             "vintage"=> $vintage,
+             "updated_by"=> $updatedby,
             "status"=>$status,
             "resource_name_new"=>$rnn,
             "remarks"=> $remarks,
@@ -205,22 +226,28 @@ class Admincontroller extends Controller
         return redirect('/Admin/View')->with('success','Successfuly added!');
     }
 
+
+
+
+
     public function Updatemandated(Request $request)
     {
          $id = $request->input('id');
-        $part_name = $request->input('part_name');
-        $rt = $request->input('rt');
-        $ct = $request->input('ct');
-        $rn = $request->input('rn');
-        $ft = $request->input('ft');
-        $NMFhst = $request->input('NMFhst');
-        $tf = $request->input('tf');
-        $ec = $request->input('ec');
-        $rc = $request->input('rc');
+        $part_name = $request->input('participant-name');
+        $short_name = $request->input('short-name');
+        $rt = $request->input('registration-type');
+        $ct = $request->input('category-type');
+        $rn = $request->input('resource-name');
+        $ft = $request->input('facility-type');
+        $NMFhst = $request->input('NotMultiFuelhybrid-systemtype');
+        $eff_date = $request->input('effectivity-date');
+        $tf = $request->input('type-fit');
+        $ec = $request->input('eligible-capacity');
+        $rc = $request->input('reg-capacity');
         $type = $request->input('type');
         $vintage = $request->input('vintage');
         $status = $request->input('status');
-        $rnn = $request->input('rnn');
+        $rnn = $request->input('resource-name-new');
         $remarks = $request->input('remarks');
         $region = $request->input('region');
         $updatedby = 'admin';
@@ -228,22 +255,24 @@ class Admincontroller extends Controller
         $updateddate = Carbon::now()->format('Y-m-d');
 
         $request->validate([
-        'part_name' => 'required',
-          'rt' => 'required',
-          'ct' => 'required',
-          'rn'=>'required',
-           'ft' => 'required',
-          'NMFhst' => 'required',
-          'tf' => 'required',
-          'ec'=>'required', 
-          'rc' => 'required',
+        'participant-name' => 'required|max:30',
+         'short-name' => 'required|max:30',
+          'registration-type' => 'required',
+          'category-type' => 'required',
+          'resource-name'=>'required|max:12',
+           'facility-type' => 'required',
+          'NotMultiFuelhybrid-systemtype' => 'required',
+          'type-fit' => 'required',
+          'eligible-capacity'=>"required|numeric|between:0,99.0000000000",
+          'reg-capacity' => "required|numeric|between:0,99.0000000000",
           'type' => 'required',
-           'rnn' => 'required',
+           'resource-name-new' => 'required|max:12',
           'remarks' => 'required',
           'region' => 'required'
        ]);
  
             DB::update('update mandated_participants set participant_name= ?,
+              short_name = ?,
                 registration_type= ?,
                 category_type= ?,
                 resource_name= ?,
@@ -258,16 +287,32 @@ class Admincontroller extends Controller
                 resource_name_new= ?,
                 remarks= ?,
                 region= ?
-                 where id = ?',[$part_name,$rt,$ct,$rn,$ft,$NMFhst,$tf,$ec,$rc,$type,$vintage,$status,$rnn,$remarks,$region,$id]);
-        return redirect('/Admin/View')->with('success','Edited Successfuly!');
+                 where id = ?',[$part_name,$short_name,$rt,$ct,$rn,$ft,$NMFhst,$tf,$ec,$rc,$type,$vintage,$status,$rnn,$remarks,$region,$id]);
+        return redirect('/Admin/View')->with('success','Edited Successfully!');
     }
+
+
       public function Deletemandated(Request $request)
     {
          $id = $request->input('id');
-         
-         DB::update('delete from mandated_participants where id = ?',[$id]);
-            
+       $NMFhst = $request->input('NMFhst');
+       $status = 0;
+       if($NMFhst ==1)
+       {
+           DB::update('update mandated_participants set status= ?
+                 where id = ?',[$status,$id]);
+             
+      // DB::statement("ALTER TABLE mandated_participants AUTO_INCREMENT =  1");   
+       }
+       else{
+         DB::update('update mandated_participants set status= ?
+                 where id = ?',[$status,$id]);
+       
+      // DB::statement("ALTER TABLE mandated_participants AUTO_INCREMENT =  1"); 
+       }  
         return redirect('/Admin/View')->with('success','Deleted Successfuly!');
     }
+
+
   
 }

@@ -38,6 +38,7 @@
             <tr>
             
                 <th>Participant Name</th>
+                  <th>Short Name</th>
                 <th>Registration Type</th>
                 <th>Category Type</th>
                 <th>Resource Name</th>
@@ -61,6 +62,7 @@
           @foreach($ViewMandatedParticipants as $ViewMandatedParticipants)
           <tr>
             <td>{{$ViewMandatedParticipants->participant_name}}</td>
+              <td>{{$ViewMandatedParticipants->short_name}}</td>
 
               @foreach($registrationtype as $key1=>$value1)
                 @if($ViewMandatedParticipants->registration_type == $key1)
@@ -99,7 +101,14 @@
             <td>{{$ViewMandatedParticipants->reg_capacity}}</td>
             <td>{{$ViewMandatedParticipants->Type}}</td>
              <td>{{$ViewMandatedParticipants->vintage}}</td>
-            <td>{{$ViewMandatedParticipants->status}}</td>
+
+               @if($ViewMandatedParticipants->status == 1)
+                <td>{{ __('Active') }}</td>
+                @else
+                 <td>{{ __('In-Active') }}</td>
+                @endif
+             
+
             <td>{{$ViewMandatedParticipants->resource_name_new}}</td>
              <td>{{$ViewMandatedParticipants->remarks}}</td>
 
@@ -108,9 +117,19 @@
                 <td>{{$value6}}</td>
                 @endif
               @endforeach
+
+              @if($ViewMandatedParticipants->status == 0)
+              
+                <input type="hidden" name="id" id="id" value="{{$ViewMandatedParticipants->id}}">
+            <td>
+              <button type="submit" onclick="return confirm('Are you sure you want to Delete {{$ViewMandatedParticipants->participant_name}} ?')" disabled><i class="fas fa-trash"></i>{{ __('Delete') }}</button></td>
+              
+              @else
               <input type="hidden" name="id" id="id" value="{{$ViewMandatedParticipants->id}}">
             <td><a href="{{url('/Admin/Registration/Edit',$ViewMandatedParticipants->id)}}" onclick="return confirm('Are you sure you want to edit {{$ViewMandatedParticipants->participant_name}} ?')"><i class="fas fa-edit"></i> Edit</a> &emsp;
               <button type="submit" onclick="return confirm('Are you sure you want to Delete {{$ViewMandatedParticipants->participant_name}} ?')"><i class="fas fa-trash"></i>{{ __('Delete') }}</button></td>
+            
+            @endif
           </tr>
           @endforeach
         </tbody>

@@ -81,7 +81,7 @@
  <b>Total RECs Remaining : {{$total}}</b></h3>
  <button style="position:fixed;
 right:20px;
-bottom:100px" type="submit" class="btn btn-success"><i class="fas fa-save" style="font-size: 20px"></i> Save Changes</button>
+bottom:100px" type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to save changes?')"><i class="fas fa-save" style="font-size: 20px"></i> Save Changes</button>
 
 </form>
     <script type="text/javascript">

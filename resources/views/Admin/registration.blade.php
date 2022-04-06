@@ -1,6 +1,12 @@
 @extends('layouts2.master')
 
 @section('content')
+<style type="text/css">
+  .form-error {
+
+  border: 2px solid #e74c3c;
+}
+</style>
 <div class="header bg-primary pb-1">
       <div class="container-fluid">
         <div class="header-body">
@@ -38,7 +44,7 @@
                   </div><br />
                 @endif
                
-               <form method="post" action="{{ route('Storemandated') }}" enctype="multipart/form-data"> 
+               <form method="post" role="form" action="{{ route('Storemandated') }}" enctype="multipart/form-data"> 
                 @csrf <!-- {{ csrf_field() }} -->
                 <div style="text-align: right">
                    <label class="form-control-label">{{ __('Date Today') }} 
@@ -78,7 +84,21 @@
               </div>
               <div class="col-xl-10 order-xl-2">
                                
-                <input type="text" class="form-control form-control-lg" name="part_name" id="part_name"/>
+                <input type="text" class="form-control form-control-lg{{($errors->first('participant-name') ? ' form-error' : '')}}" name="participant-name" id="participant-name" value="{{ old('participant-name') }}"/>
+               
+
+              </div>
+            </div>
+              <div class="row align-items-center pt-4 pb-3">
+                 
+              <div class="col-md-3 ps-5">
+
+                <label class="form-control-label" >{{ __('Short Name') }}</label>
+
+              </div>
+              <div class="col-xl-10 order-xl-2">
+                               
+                <input type="text" class="form-control form-control-lg{{($errors->first('short-name') ? ' form-error' : '')}}" name="short-name" id="short-name" value="{{ old('short-name') }}"/>
                
 
               </div>
@@ -93,11 +113,10 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-          <select class="form-control form-control-lg" name="rt" id="rt" >
+          <select class="form-control form-control-lg{{($errors->first('registration-type') ? ' form-error' : '')}}" name="registration-type" id="registration-type" value="{{ old('registration-type') }}">
            <option value="">Choose</option>
             @foreach($registrationtype as $key => $value)
               <option value="{{$key}}">{{$value}}</option>
-           
             @endforeach
           </select>
               
@@ -113,7 +132,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-            <select class="form-control form-control-lg" name="ct" id="ct" >
+            <select class="form-control form-control-lg{{($errors->first('category-type') ? ' form-error' : '')}}" name="category-type" id="category-type" value="{{ old('category-type') }}">
              <option value="">Choose</option>
               @foreach($categorytype as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
@@ -133,7 +152,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-                <input type="text" class="form-control form-control-lg" name="rn" id="rn" />
+                <input type="text" class="form-control form-control-lg{{($errors->first('resource-name') ? ' form-error' : '')}}" name="resource-name" id="resource-name" value="{{ old('resource-name') }}"/>
 
               </div>
             </div>
@@ -147,7 +166,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-             <select class="form-control form-control-lg" name="ft" id="ft" >
+             <select class="form-control form-control-lg{{($errors->first('facility-type') ? ' form-error' : '')}}" name="facility-type" id="facility-type" value="{{ old('facility-type') }}">
              <option value="">Choose</option>
               @foreach($facilitytype as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
@@ -166,7 +185,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-              <select class="form-control form-control-lg" name="NMFhst" id="NMFhst" onchange="myFunctions()">
+              <select class="form-control form-control-lg{{($errors->first('NotMultiFuelhybrid-systemtype') ? ' form-error' : '')}}" name="NotMultiFuelhybrid-systemtype" id="NotMultiFuelhybrid-systemtype" onchange="myFunctions()" value="{{ old('NotMultiFuelhybrid-systemtype') }}">
              <option value="">Choose</option>
               @foreach($notmultifuel as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
@@ -180,7 +199,7 @@
                  <label for="others"  style="font-size: 30px">{{ __('Effectivity_date* ') }}</label>
                   <br>
                   <div class="col-xl-6 order-xl-3">
-                  <input type="date" class="form-control form-control-lg"  id="eff_date" name="eff_date">
+                  <input type="date" class="form-control form-control-lg{{($errors->first('effectivity-date') ? ' form-error' : '')}}"  id="effectivity-date" name="effectivity-date" value="{{ old('effectivity-date') }}">
                  </div>
 
               </div>
@@ -193,7 +212,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                 <select class="form-control form-control-lg" name="tf" id="tf" >
+                 <select class="form-control form-control-lg{{($errors->first('type-fit') ? ' form-error' : '')}}" name="type-fit" id="type-fit" value="{{ old('type-fit') }}">
              <option value="">Choose</option>
               @foreach($typefit as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
@@ -211,7 +230,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="ec" id="ec" />
+                <input type="number" class="form-control form-control-lg{{($errors->first('eligible-capacity') ? ' form-error' : '')}}" name="eligible-capacity" id="eligible-capacity" value="{{ old('eligible-capacity') }}"/>
 
               </div>
             </div>
@@ -224,7 +243,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="rc" id="rc" />
+                <input type="number" class="form-control form-control-lg{{($errors->first('reg-capacity') ? ' form-error' : '')}}" name="reg-capacity" id="reg-capacity" value="{{ old('reg-capacity') }}"/>
 
               </div>
             </div>
@@ -237,7 +256,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                 <select class="form-control form-control-lg" name="type" id="type" >
+                 <select class="form-control form-control-lg{{($errors->first('type') ? ' form-error' : '')}}" name="type" id="type" value="{{ old('type') }}">
                 <option value="">Choose</option>
               @foreach($type as $key => $value)
                 <option value="{{$value}}">{{$value}}</option>
@@ -256,7 +275,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="vintage" id="vintage" />
+                <input type="text" class="form-control form-control-lg{{($errors->first('vintage') ? ' form-error' : '')}}" name="vintage" id="vintage" value="{{ old('vintage') }}"/>
 
               </div>
             </div>
@@ -269,7 +288,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="rnn" id="rnn" />
+                <input type="text" class="form-control form-control-lg{{($errors->first('resource-name-new') ? ' form-error' : '')}}" name="resource-name-new" id="resource-name-new" value="{{ old('resource-name-new') }}"/>
 
               </div>
             </div>
@@ -282,7 +301,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="remarks" id="remarks" />
+                <input type="text" class="form-control form-control-lg{{($errors->first('remarks') ? ' form-error' : '')}}" name="remarks" id="remarks" value="{{ old('remarks') }}"/>
 
               </div>
             </div>
@@ -295,7 +314,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                 <select class="form-control form-control-lg" name="region" id="region" >
+                 <select class="form-control form-control-lg{{($errors->first('region') ? ' form-error' : '')}}" name="region" id="region" value="{{ old('region') }}">
              <option value="">Choose</option>
               @foreach($region as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
@@ -324,7 +343,7 @@
                        var a = document.getElementById("remove");
                      
                      
-                      if ($( "#NMFhst" ).val() === "1"){
+                      if ($( "#NotMultiFuelhybrid-systemtype" ).val() === "1"){
                           
                             y.style.display = "block";
                             a.style.display = "none";

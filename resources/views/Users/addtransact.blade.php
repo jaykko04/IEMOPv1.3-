@@ -445,9 +445,9 @@
           </div>
               <hr class="mx-n3">
             <div class="px-5 py-4">
-              <button type="submit"  class="btn btn-primary btn-lg" ><i class="fas fa-save" style="font-size: 20px"></i> Save</button>
+              <button type="submit"  class="btn btn-primary btn-lg" onclick="return confirm('Are you sure you want to submit this form?')" ><i class="fas fa-save" style="font-size: 20px"></i> Save</button>
           <!-- data-toggle="modal" data-target="#saveModal" -->
-             <button type="reset"  class="btn btn-primary btn-lg" ><i class="fas fa-undo" style="font-size: 20px"></i> Save</button>
+             <button type="reset"  class="btn btn-primary btn-lg" onclick="return confirm('Are you sure you want to reset this form?')"><i class="fas fa-undo" style="font-size: 20px"></i> Reset</button>
              </div>
           </div>
         </form>

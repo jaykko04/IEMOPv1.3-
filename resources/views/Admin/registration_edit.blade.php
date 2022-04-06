@@ -80,7 +80,21 @@
                              @foreach($EditMandatedParticipants as $EditMandatedParticipants)
 
                               @endforeach
-                <input type="text" class="form-control form-control-lg" name="part_name" id="part_name" value="{{$EditMandatedParticipants->participant_name}}" />
+                <input type="text" class="form-control form-control-lg" name="participant-name" id="participant-name" value="{{$EditMandatedParticipants->participant_name}}" />
+               
+
+              </div>
+            </div>
+             <div class="row align-items-center pt-4 pb-3">
+                 
+              <div class="col-md-3 ps-5">
+
+                <label class="form-control-label" >{{ __('Short Name') }}</label>
+
+              </div>
+              <div class="col-xl-10 order-xl-2">
+                               
+                <input type="text" class="form-control form-control-lg" name="short-name" id="short-name" value="{{$EditMandatedParticipants->short_name}}"/>
                
 
               </div>
@@ -95,7 +109,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-          <select class="form-control form-control-lg" name="rt" id="rt" >
+          <select class="form-control form-control-lg" name="registration-type" id="registration-type" >
            <option value="">Choose</option>
               @foreach($registrationtype as $key=>$value)
                 @if($EditMandatedParticipants->registration_type == $key)
@@ -118,7 +132,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-            <select class="form-control form-control-lg" name="ct" id="ct" >
+            <select class="form-control form-control-lg" name="category-type" id="category-type" >
              <option value="">Choose</option>
            @foreach($categorytype as $key=>$value)
                 @if($EditMandatedParticipants->category_type == $key)
@@ -141,7 +155,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-                <input type="text" class="form-control form-control-lg" name="rn" id="rn" value="{{$EditMandatedParticipants->resource_name}}"/>
+                <input type="text" class="form-control form-control-lg" name="resource-name" id="resource-name" value="{{$EditMandatedParticipants->resource_name}}"/>
 
               </div>
             </div>
@@ -155,7 +169,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-             <select class="form-control form-control-lg" name="ft" id="ft" >
+             <select class="form-control form-control-lg" name="facility-type" id="facility-type" >
              <option value="">Choose</option>
             @foreach($facilitytype as $key=>$value)
                 @if($EditMandatedParticipants->facility_type == $key)
@@ -177,7 +191,7 @@
               </div>
               <div class="col-xl-10 order-xl-1">
 
-              <select class="form-control form-control-lg" name="NMFhst" id="NMFhst" >
+              <select class="form-control form-control-lg" name="NotMultiFuelhybrid-systemtype" id="NotMultiFuelhybrid-systemtype" onchange="myFunctions()">
              <option value="">Choose</option>
            @foreach($notmultifuel as $key=>$value)
                 @if($EditMandatedParticipants->notMultiFuelHybridSystemType == $key)
@@ -188,7 +202,32 @@
               @endforeach
             </select>
               </div>
+              
             </div>
+            @if($EditMandatedParticipants->notMultiFuelHybridSystemType == 1)
+             <div id="effect_date" style="display: block"> 
+                 <label for="others"  style="font-size: 30px">{{ __('Effectivity_date* ') }}</label>
+                  <br>
+                  <div class="col-xl-6 order-xl-3">
+                     @foreach($EditParticipant_pef as $EditParticipant_pef)
+                      @endforeach
+                  <input type="date" class="form-control form-control-lg"  id="effectivity-date" name="effectivity-date" value="{{ $EditParticipant_pef->effectivity_date }}">
+                 
+                 </div>
+
+              </div>
+              @else
+               <div id="effect_date" style="display: none"> 
+                 <label for="others"  style="font-size: 30px">{{ __('Effectivity_date* ') }}</label>
+                  <br>
+                  <div class="col-xl-6 order-xl-3">
+                   
+                  <input type="date" class="form-control form-control-lg"  id="effectivity-date" name="effectivity-date" value="">
+                 
+                 </div>
+
+              </div>
+              @endif
             <div class="row align-items-center pt-4 pb-3">
                  
 
@@ -198,7 +237,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                 <select class="form-control form-control-lg" name="tf" id="tf" >
+                 <select class="form-control form-control-lg" name="type-fit" id="type-fit" >
              <option value="">Choose</option>
              @foreach($typefit as $key=>$value)
                 @if($EditMandatedParticipants->typeFit == $key)
@@ -219,7 +258,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="ec" id="ec" value="{{$EditMandatedParticipants->eligible_capacity}}"/>
+                <input type="text" class="form-control form-control-lg" name="eligible-capacity" id="eligible-capacity" value="{{$EditMandatedParticipants->eligible_capacity}}"/>
 
               </div>
             </div>
@@ -232,7 +271,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="rc" id="rc" value="{{$EditMandatedParticipants->reg_capacity}}"/>
+                <input type="text" class="form-control form-control-lg" name="reg-capacity" id="reg-capacity" value="{{$EditMandatedParticipants->reg_capacity}}"/>
 
               </div>
             </div>
@@ -271,6 +310,24 @@
 
               </div>
             </div>
+
+             <div class="row align-items-center pt-4 pb-3">
+                 
+
+              <div class="col-md-3 ps-5">
+
+                <label class="form-control-label" >{{ __('Status') }}</label>
+
+              </div>
+              <div class="col-xl-10 order-xl-1">
+                 @if($EditMandatedParticipants->status == 1)
+               <input type="text" class="form-control form-control-lg" name="status" id="status" value="Active" disabled />
+                @else
+               <input type="text" class="form-control form-control-lg" name="status" id="status" value="In-Active" disabled />
+                @endif
+               
+              </div>
+            </div>
              <div class="row align-items-center pt-4 pb-3">
                  
 
@@ -280,7 +337,7 @@
 
               </div>
               <div class="col-xl-10 order-xl-1">
-                <input type="text" class="form-control form-control-lg" name="rnn" id="rnn" value="{{$EditMandatedParticipants->resource_name_new}}"/>
+                <input type="text" class="form-control form-control-lg" name="resource-name-new" id="resource-name-new" value="{{$EditMandatedParticipants->resource_name_new}}"/>
 
               </div>
             </div>
@@ -333,4 +390,24 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript">
+                        function myFunctions(){
+                       var y = document.getElementById("effect_date");
+                       var a = document.getElementById("remove");
+                     
+                     
+                      if ($( "#NotMultiFuelhybrid-systemtype" ).val() === "1"){
+                          
+                            y.style.display = "block";
+                            a.style.display ='None';
+                          }
+                   
+                      else {
+                            y.style.display = "none";
+                             a.style.display ='None';
+                           
+                          }
+                                        }
+                
+                </script>     
 @endsection
