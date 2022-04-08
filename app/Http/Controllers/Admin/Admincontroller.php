@@ -18,6 +18,9 @@ use App\Charts\UserChart;
 use Carbon\Carbon;
 use PDF;
 use Carbon\CarbonPeriod;
+
+
+
 class Admincontroller extends Controller
 {
     /**

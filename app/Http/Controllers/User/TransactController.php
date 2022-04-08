@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\User;
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
@@ -18,6 +17,7 @@ use App\Charts\UserChart;
 use Carbon\Carbon;
 use PDF;
 use Carbon\CarbonPeriod;
+
 class TransactController extends Controller
 {
     /**
@@ -95,15 +95,16 @@ class TransactController extends Controller
             $getexpirydate = $request->get('ed');
 
 
-      
+    return view('Users.addtransact')->with('seller',$seller)
+            ->with("buyer",$buyer)
+            ->with("Type",$Type)
+            ->with("issueddate",$issueddate)
+            ->with("expirydate",$expirydate);
 
-return view('Users.addtransact')->with('seller',$seller)
-        ->with('buyer',$buyer)
-        ->with("Type",$Type)
-        ->with("issueddate",$issueddate)
-        ->with("expirydate",$expirydate);
+        }
 
-    }
+
+
     public function pendingtransact()
     {
           $rectransfer_req  =  DB::table('rectransfer_req')
@@ -113,6 +114,7 @@ return view('Users.addtransact')->with('seller',$seller)
 
     return view('Users.Pendingtransact', compact('rectransfer_req'));
     }
+
     
     public function approvedtransact()
     {
@@ -122,6 +124,7 @@ return view('Users.addtransact')->with('seller',$seller)
             ->get();
      return view('Users.Approvedtransact', compact('rectransfer_req'));
     }
+    
 
     public function store(Request $request)
     {
@@ -139,6 +142,7 @@ return view('Users.addtransact')->with('seller',$seller)
         $getexpirydate = $request->input('expirydate');
 
         $request->validate([
+        'org_name' => 'required',
         'file' => 'required|mimes:pdf|max:5048',
           'newownername' => 'required',
           'price' => 'required',
@@ -154,36 +158,35 @@ return view('Users.addtransact')->with('seller',$seller)
             $agreement_file_path = $request->file('file')->storeAs('uploads', $fileName, 'public');
 
             $fileModel->agreement_file_path = '/storage/' . $agreement_file_path;
-           /* $fileModel->save();*/
           }
            
 
           if($start == null && $end ==null)
           {
-               $recs  =  DB::table('compliance')
-              ->select('*')
-              ->where('ownername','=',$ownername)
-              ->where('dateissued','=',$getdateissued)
-              ->where('expirydate','=',$getexpirydate)
-              ->where('technology','=',$gettype)
-              ->get();
-              foreach ($recs as $recs) {
-               
-              }
-            if($recs->totalrecs < $count)
-            {
-            return redirect('/Users/AddTransaction')->with('failed','Not enough recs.');
-            }
-            else if($recs->totalrecs >= $count)
-            {
-                  $data2 = array("ownername"=>$ownername,"newownername"=>$newownername,"price"=>$price,"volume"=>$count,"technology"=>$gettype,"dateissued"=>$getdateissued,"expirydate"=>$getexpirydate,"updateddate"=>$xferRequestDate,"transfer_type"=>"One-off","xferStatus"=>$xferStatus,"agreement_file_path"=> $agreement_file_path);
-                       DB::table('rectransfer_req')->insert($data2);
-            return redirect('/Users/PendingTransactions')->with('success','Transaction Successfully created.');
-            }
-            else
-            {
-            return redirect('/Users/PendingTransactions')->with('failed','Transaction failed');
-            }
+                     $recs  =  DB::table('compliance')
+                    ->select('*')
+                    ->where('ownername','=',$ownername)
+                    ->where('dateissued','=',$getdateissued)
+                    ->where('expirydate','=',$getexpirydate)
+                    ->where('technology','=',$gettype)
+                    ->get();
+                    foreach ($recs as $recs) {
+                     
+                    }
+                  if($recs->totalrecs < $count)
+                  {
+                  return redirect('/Users/AddTransaction')->with('failed','Not enough recs.');
+                  }
+                  else if($recs->totalrecs >= $count)
+                  {
+                        $data2 = array("ownername"=>$ownername,"newownername"=>$newownername,"price"=>$price,"volume"=>$count,"technology"=>$gettype,"dateissued"=>$getdateissued,"expirydate"=>$getexpirydate,"updateddate"=>$xferRequestDate,"transfer_type"=>"One-off","xferStatus"=>$xferStatus,"agreement_file_path"=> $agreement_file_path);
+                             DB::table('rectransfer_req')->insert($data2);
+                  return redirect('/Users/PendingTransactions')->with('success','Transaction Successfully created.');
+                  }
+                  else
+                  {
+                  return redirect('/Users/PendingTransactions')->with('failed','Transaction failed');
+                  }
           }
           else
           {
@@ -194,7 +197,9 @@ return view('Users.addtransact')->with('seller',$seller)
               
           return redirect('/Users/PendingTransactions')->with('success','Transaction Successfully created.');
           }
-}
+        }
+
+
 
     /**
      * Display the specified resource.
@@ -206,6 +211,9 @@ return view('Users.addtransact')->with('seller',$seller)
     {
         //
     }
+
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -426,12 +434,12 @@ return view('Users.addtransact')->with('seller',$seller)
           ->with(compact('expired_total'))
           ->with(compact('user'))
            ->with(compact('month'));
-
         }
+
+
 
         public function generatePDF(Request $request)
         {
-           
             $data = [
                 'title' => 'Welcome to ItSolutionStuff.com','date' => date('m/d/Y')];
               
@@ -440,10 +448,12 @@ return view('Users.addtransact')->with('seller',$seller)
             return $pdf->stream('MonthlyrecsReport.pdf');
         }
 
+
         public function search()
         {
             return  view('Users.modal_search');
         }
+
 
         public function update(Request $request, $id)
         {
@@ -507,17 +517,19 @@ return view('Users.addtransact')->with('seller',$seller)
 
         return view('Users.Scheduled', compact('schedule'));
         }
-    public function compliance()
-    {
-       $id = Auth::id();
-      $user_id  =  DB::table('users')
-      ->select('*')
-      ->where('id','=',$id)
-      ->get();
-      foreach ($user_id as $key) {
-       
-      }
-        $compliance = DB::table('compliance')
+
+
+        public function compliance()
+        {
+           $id = Auth::id();
+          $user_id  =  DB::table('users')
+          ->select('*')
+          ->where('id','=',$id)
+          ->get();
+          foreach ($user_id as $key) {
+           
+                                      }
+          $compliance = DB::table('compliance')
           ->select('*')
           ->where('ownername','=',$key->user_id)
           ->get();
@@ -536,26 +548,29 @@ return view('Users.addtransact')->with('seller',$seller)
         ->with(compact('compliance'))
         ->with(compact('total'))
         ->with(compact('totalsur'));
-     }
+        }
 
     
-      public function expired()
-    { $id = Auth::id();
-      $user_id  =  DB::table('users')
-      ->select('*')
-      ->where('id','=',$id)
-      ->get();
-      foreach ($user_id as $key) {
-       
-      }
-         $expiration  =  DB::table('expiration_main')
-            ->select('*')
-             ->where('ownername','=',$key->user_id)
-            ->groupBy('expirydate')
-            ->get();
 
-        return view('Users.expired', compact('expiration'));
-    }
+        public function expired()
+        { $id = Auth::id();
+          $user_id  =  DB::table('users')
+          ->select('*')
+          ->where('id','=',$id)
+          ->get();
+          foreach ($user_id as $key) {
+           
+          }
+             $expiration  =  DB::table('expiration_main')
+                ->select('*')
+                 ->where('ownername','=',$key->user_id)
+                ->groupBy('expirydate')
+                ->get();
+
+            return view('Users.expired', compact('expiration'));
+        }
+
+
         public function compliancereq(Request $request)
         {
                 $id = Auth::id();
@@ -570,15 +585,15 @@ return view('Users.addtransact')->with('seller',$seller)
                 $datetoday = Carbon::now();
                 $updateby = $key->user_id;
            
-        $data = $request->all();
-        $ownername = $data['ownername'];
-        $dateissued = $data['dateissued'];
-        $expirydate = $data['expirydate'];
-        $technology = $data['technology'];
-        $totalrecs = $data['totalrecs'];
-        $surrender = $data['surrender_req'];
+              $data = $request->all();
+              $ownername = $data['ownername'];
+              $dateissued = $data['dateissued'];
+              $expirydate = $data['expirydate'];
+              $technology = $data['technology'];
+              $totalrecs = $data['totalrecs'];
+              $surrender = $data['surrender_req'];
 
-        $x =0;
+              $x =0;
             foreach($ownername as $ownername)
             {
 
@@ -602,13 +617,11 @@ return view('Users.addtransact')->with('seller',$seller)
                         ->take($surrender[$x])
                         ->get();
                          foreach ($recertificate['data'] as $key) {
-                                # code...
                              $delete = DB::table('recertificate')
                              ->where('serialnumber',$key->serialnumber)
                              ->delete();
 
-                    // $serialnumber = $request->input('serialnumber');
-                        $data2 = array('serialnumber'=>$key->serialnumber,
+                       $data2 = array('serialnumber'=>$key->serialnumber,
                           "original_ownername"=>$key->ownername,
                           "ownername"=>$key->ownername,
                           "newownername"=>$key->ownername,

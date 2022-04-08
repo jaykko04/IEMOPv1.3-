@@ -362,6 +362,7 @@
 
               </div>
                </br>
+
                <div id="oneoff" style="display: none">
                         <label for="others" style="font-size: 30px">{{ __('One-off REC Transfer* ') }}</label>
                         <div class="col-xl-6 order-xl-3">
@@ -373,12 +374,12 @@
 
                  <hr class="mx-n3">
               </br>
-               <label for="others">{{ __('Price ') }}</label>
+               <label for="others">{{ __('Price') }}</label>
                  
                   <div class="col-xl-6 order-xl-3">
                     <input type="number" class="form-control form-control-lg" placeholder="&#8369; " min="1" name="price"/>
                   </div>
-                  <label for="others">{{ __('Volume ') }}</label>
+                  <label for="others">{{ __('Volume') }}</label>
                  
                   <div class="col-xl-6 order-xl-3">
                     <input type="number" class="form-control form-control-lg"  min="1" name="volume" id="volume"/>
@@ -421,7 +422,7 @@
         today = yyyy + '-' + mm + '-' + dd;
         $('#updateddate').attr('min',today);
         
-    </script>
+           </script>
             <hr class="mx-n3">
             <h3>{{ __('IV. CONFIRMATION OF COUNTERPARTIES ') }}</h3>
             <div class="row align-items-center py-3">

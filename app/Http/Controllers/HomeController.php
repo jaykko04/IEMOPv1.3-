@@ -58,13 +58,13 @@ class HomeController extends Controller
         $sucessful_transaction  =  DB::table('rectransfer_req')
             ->select('*')
             ->where('xferStatus','=','A')
-            ->where('ownername','=',$user or 'newownername','=',$user)
+            ->where('ownername','=',$user)
             ->count();
 
         $pending_transaction  =  DB::table('rectransfer_req')
             ->select('*')
             ->where('xferStatus','=','P')
-            ->where('ownername','=',$user or 'newownername','=',$user)
+            ->where('ownername','=',$user)
             ->count();
 
         return view('Users.home')->with(compact('Recertificate_count'))

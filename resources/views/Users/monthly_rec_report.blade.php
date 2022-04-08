@@ -265,7 +265,7 @@
             <td>10</td>
             <td>20</td>
               </tr>
- @endforeach
+ 			@endforeach
      
              <tr>
             <td>-</td>
