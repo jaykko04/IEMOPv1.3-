@@ -18,11 +18,11 @@
         </div>
       </div>
     </div>
-    @if(session()->get('success'))
-    <div class="alert alert-success">
-      {{ session()->get('success') }}  
-    </div><br />
-    @endif
+      @if(session()->get('success'))
+      <div class="alert alert-success">
+        {{ session()->get('success') }}  
+      </div><br />
+       @endif
 <div class="container ">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-xl-14">

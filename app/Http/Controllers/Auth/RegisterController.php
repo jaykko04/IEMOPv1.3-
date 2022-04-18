@@ -29,9 +29,9 @@ class RegisterController extends Controller
      *
      * @var string
      */
-   public function redirectTo() {
+   public function redirectTo(){
 
-      return '/Users/home';   
+      return '/Admin/ViewUserList';   
   }
 
     /**
@@ -53,6 +53,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
+          //  'participant_name' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -70,7 +71,9 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+           // 'role' => $data['role'],
             'password' => Hash::make($data['password']),
+           //  'user_id' => $data['participant_name'],
         ]);
     }
 }

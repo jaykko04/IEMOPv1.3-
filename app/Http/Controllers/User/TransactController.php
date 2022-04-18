@@ -157,7 +157,7 @@ class TransactController extends Controller
             $fileName = time().'_'.$request->file->getClientOriginalName();
             $agreement_file_path = $request->file('file')->storeAs('uploads', $fileName, 'public');
 
-            $fileModel->agreement_file_path = '/storage/' . $agreement_file_path;
+            $fileModel->agreement_file_path =  '/storage/' . $agreement_file_path;
           }
            
 
@@ -268,13 +268,12 @@ class TransactController extends Controller
             ->get();
 
         $surrendered  =  DB::table('compliance_main')
-            ->select(DB::raw('date_generated'), DB::raw('count(*) as total'))
+            ->select(DB::raw('date_generated'), DB::raw('sum(total_surrender) as total'))
             ->groupBy('date_generated')
             ->orderBy('date_generated', 'asc')
             ->Where('date_generated', 'like', $from . '%')
             ->where('ownername','=',$user)
             ->where('total_surrender','!=','0')
-            ->take(7)
             ->get();
 
         $expired_total  =  DB::table('expiration_sub')
@@ -433,7 +432,7 @@ class TransactController extends Controller
           ->with(compact('surrendered_total'))
           ->with(compact('expired_total'))
           ->with(compact('user'))
-           ->with(compact('month'));
+          ->with(compact('month'));
         }
 
 

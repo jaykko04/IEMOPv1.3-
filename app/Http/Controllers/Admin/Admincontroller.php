@@ -18,7 +18,7 @@ use App\Charts\UserChart;
 use Carbon\Carbon;
 use PDF;
 use Carbon\CarbonPeriod;
-
+use Illuminate\Support\Facades\Hash;
 
 
 class Admincontroller extends Controller
@@ -315,7 +315,49 @@ class Admincontroller extends Controller
        }  
         return redirect('/Admin/View')->with('success','Deleted Successfuly!');
     }
-
-
+   public function UserRegistration(Request $request)
+    {
+         $ViewParticipantsName  =  DB::table('add_transaction')
+            ->select('*')
+            ->get();
+        return view('Admin.user_registration')->with(compact('ViewParticipantsName'));
+    }
+   public function ViewUserList(Request $request)
+    {
+         $UserList  =  DB::table('users')
+            ->select('*')
+            ->get();
+        return view('Admin.registration_list')->with(compact('UserList'));
+    }
   
+  public function registerUser(Request $request)
+    {
+        $role = $request->input('role');
+        $participant_name = $request->input('participant_name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $password_confirmation = $request->input('password_confirmation');
+     
+        $request->validate([
+        'role' => 'required|max:30',
+          'participant_name' => 'required',
+          'email' => 'required',
+          'password'=>'required|max:12',
+           'password_confirmation' => 'required',
+       ]);
+
+        if($password != $password_confirmation)
+        {
+           return redirect('/Admin/UserRegistration')->with('Failed','Password Doesnt Match!');
+        }
+        $data2 = array("role"=>$role,
+            "name"=>$participant_name,
+            "email"=>$email,
+            "user_id"=>$participant_name,
+            "password"=>Hash::make('password'));
+           DB::table('users')->insert($data2);
+
+        return redirect('/Admin/ViewUserList')->with('success','User successfuly added!');
+    }
+
 }

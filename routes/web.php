@@ -36,8 +36,11 @@ Route::get('/Admin/View', [App\Http\Controllers\Admin\Admincontroller::class, 'V
 
 Route::post('Storemandated', [App\Http\Controllers\Admin\Admincontroller::class, 'Storemandated'])->name('Storemandated')->middleware('role:admin');
 
+Route::get('/Admin/UserRegistration', [App\Http\Controllers\Admin\Admincontroller::class, 'UserRegistration'])->name('UserRegistration')->middleware('role:admin');
 
+Route::get('/Admin/ViewUserList', [App\Http\Controllers\Admin\Admincontroller::class, 'ViewUserList'])->name('ViewUserList')->middleware('role:admin');
 
+Route::post('registerUser', [App\Http\Controllers\Admin\Admincontroller::class, 'registerUser'])->name('registerUser')->middleware('role:admin');
 
 
 
